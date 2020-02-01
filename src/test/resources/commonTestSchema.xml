@@ -1,0 +1,61 @@
+<xs:schema elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="testXmlDocument">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="child1"/>
+                <xs:element name="child2">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute type="xs:string" name="child2-attr1"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="child3">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute type="xs:string" name="child3-attr1"/>
+                                <xs:attribute type="xs:string" name="child3-attr2"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="child4"/>
+                <xs:element type="xs:string" name="child5"/>
+                <xs:element name="child6">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="child6-1"/>
+                            <xs:element name="child6-2">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:string">
+                                            <xs:attribute type="xs:string" name="child6-2-attr1"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="child6-3">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:string">
+                                            <xs:attribute type="xs:string" name="child6-3-attr1"/>
+                                            <xs:attribute type="xs:string" name="child3-attr2"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element type="xs:string" name="child6-4"/>
+                            <xs:element type="xs:string" name="child6-5"/>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="child6-attr1"/>
+                        <xs:attribute type="xs:string" name="child6-attr2"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -11,12 +11,12 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.StringReader
 import java.io.StringWriter
+import java.nio.charset.StandardCharsets
 import java.util.stream.Collectors
 import java.util.stream.IntStream
 import javax.xml.XMLConstants
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.parsers.ParserConfigurationException
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerConfigurationException
@@ -229,19 +229,16 @@ fun NodeList.asList(): List<Element> {
 
 class ElementExt {
     companion object {
-        @Throws(ParserConfigurationException::class, IOException::class, SAXException::class)
         fun createDocument(sDocument: String): Document {
             val documentBuilder = getDocumentBuilder()
             StringReader(sDocument).use { stringReader -> return documentBuilder.parse(InputSource(stringReader)) }
         }
 
-        @Throws(ParserConfigurationException::class, IOException::class, SAXException::class)
         fun createDocument(streamDocument: InputStream): Document {
             val documentBuilder = getDocumentBuilder()
             return documentBuilder.parse(streamDocument)
         }
 
-        @Throws(ParserConfigurationException::class)
         private fun getDocumentBuilder(): DocumentBuilder {
             val dbf = DocumentBuilderFactory.newInstance()
             dbf.isNamespaceAware = true
@@ -251,10 +248,9 @@ class ElementExt {
         /*
         * Create an schema from string
         * */
-        @Throws(IOException::class, SAXException::class)
-        fun createSchema(scheme: ByteArray): Schema {
+        fun createSchema(sScheme: String): Schema {
             val factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
-            val streamSource = StreamSource(ByteArrayInputStream(scheme))
+            val streamSource = StreamSource(ByteArrayInputStream(sScheme.toByteArray(StandardCharsets.UTF_8)))
             return factory.newSchema(streamSource)
         }
     }
