@@ -6,13 +6,13 @@ import org.junit.Test
 class ElementExtTest : BaseTest() {
 
     @Test
-    fun testCreateDocumentFromString() {
+    fun createDocumentFromString() {
         val document = ElementExt.createDocument(testDocument)
         assertEquals(document.firstChild.localName, "testXmlDocument")
     }
 
     @Test
-    fun testCreateDocumentFromInputStream() {
+    fun createDocumentFromInputStream() {
         val document = getResourceAsStream(testDocumentPath).use { inputStream ->
             ElementExt.createDocument(inputStream)
         }
@@ -20,7 +20,7 @@ class ElementExtTest : BaseTest() {
     }
 
     @Test
-    fun testCreateSchema() {
+    fun createSchema() {
         ElementExt.createSchema(testSchema)
     }
 }

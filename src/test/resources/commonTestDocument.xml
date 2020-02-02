@@ -1,15 +1,21 @@
-<testXmlDocument>
-    <child1 />
-    <child2 child2-attr1="child2-attr1-value" />
-    <child3 child3-attr1="child3-attr1-value" child3-attr2="child3-attr2-value" />
+<?xml version="1.0" encoding="UTF-8"?>
+<testXmlDocument xmlns:ns1="http://someaddress1" xmlns:ns2="http://someaddress2">
+    <child1/>
+    <child2 child2-attr1="child2-attr1-value"/>
+    <child3 child3-attr1="child3-attr1-value" child3-attr2="child3-attr2-value"/>
     <child4>child4-value</child4>
     <child5>child5-value</child5>
 
     <child6 child6-attr1="child6-attr1-value" child6-attr2="child6-attr2-value">
-        <child6-1 />
-        <child6-2 child6-2-attr1="child6-2-attr1-value" />
-        <child6-3 child6-3-attr1="child6-3-attr1-value" child3-attr2="child3-attr2-value" />
+        <child6-1/>
+        <child6-2 child6-2-attr1="child6-2-attr1-value"/>
+        <child6-3 child6-3-attr1="child6-3-attr1-value" child3-attr2="child3-attr2-value"/>
         <child6-4>child4-value</child6-4>
         <child6-5>child5-value</child6-5>
     </child6>
+
+    <ns1:child7>child7-value</ns1:child7>
+    <ns1:child8 child8-attr1="child8-attr1-value" child8-attr2="child8-attr2-value">
+        <ns2:child8-1/>
+    </ns1:child8>
 </testXmlDocument>

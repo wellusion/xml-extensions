@@ -5,11 +5,10 @@ import org.junit.Test
 class ElementTest: BaseTest() {
 
     @Test
-    fun testFindElementByName() {
-    }
-
-    @Test
     fun findElementByName() {
+        val document = ElementExt.createDocument(testDocument)
+        val element = document.documentElement.findElementByName("child4")
+        assert(element.textContent == "child4-value")
     }
 
     @Test
@@ -59,6 +58,4 @@ class ElementTest: BaseTest() {
     @Test
     fun asList() {
     }
-
-
 }

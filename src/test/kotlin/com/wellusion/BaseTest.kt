@@ -7,35 +7,25 @@ import java.nio.charset.StandardCharsets
 
 open class BaseTest {
 
-    protected val testDocumentPath = "commonTestDocument.xml"
-    protected var testDocument = ""
-        get() {
-            if (field == "") {
-                field = getResourceAsString(testDocumentPath)
-            }
-            return field
+    companion object {
+        const val testDocumentPath = "commonTestDocument.xml"
+        val testDocument = getResourceAsString(testDocumentPath)
+
+        const val testSchemaPath = "commonTestSchema.xml"
+        val testSchema = getResourceAsString(testSchemaPath)
+
+        private fun getResourceAsString(path: String): String {
+            val classLoader: ClassLoader = this::class.java.classLoader
+            val resourceUrl = classLoader.getResource(path)
+            assertNotNull(resourceUrl)
+            return IOUtils.toString(resourceUrl, StandardCharsets.UTF_8)
         }
 
-    protected val testSchemaPath = "commonTestSchema.xml"
-    protected var testSchema = ""
-        get() {
-            if (field == "") {
-                field = getResourceAsString(testSchemaPath)
-            }
-            return field
+        fun getResourceAsStream(path: String): InputStream {
+            val classLoader: ClassLoader = this::class.java.classLoader
+            val resource = classLoader.getResourceAsStream(path)
+            assertNotNull(resource)
+            return resource!!
         }
-
-    private fun getResourceAsString(path: String): String {
-        val classLoader: ClassLoader = this.javaClass.classLoader
-        val resourceUrl = classLoader.getResource(path)
-        assertNotNull(resourceUrl)
-        return IOUtils.toString(resourceUrl, StandardCharsets.UTF_8)
-    }
-
-    protected fun getResourceAsStream(path: String): InputStream {
-        val classLoader: ClassLoader = this.javaClass.classLoader
-        val resource = classLoader.getResourceAsStream(path)
-        assertNotNull(resource)
-        return resource!!
     }
 }
