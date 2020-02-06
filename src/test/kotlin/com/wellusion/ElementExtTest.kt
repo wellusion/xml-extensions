@@ -21,6 +21,6 @@ class ElementExtTest : BaseTest() {
 
     @Test
     fun createSchema() {
-        ElementExt.createSchema(testSchema)
+        ElementExt.createSchema(testSchemaNoNs)
     }
 }

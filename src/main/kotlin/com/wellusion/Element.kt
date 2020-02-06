@@ -5,9 +5,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
-import org.xml.sax.SAXException
 import java.io.ByteArrayInputStream
-import java.io.IOException
 import java.io.InputStream
 import java.io.StringReader
 import java.io.StringWriter
@@ -75,8 +73,6 @@ fun Element.setValueToElement(name: String, value: String) {
 * */
 @Throws(TransformerException::class)
 fun Element.asString(): String {
-    val r = 1
-    r.toString()
     val stringWriter = StringWriter()
     val transformer = getTransformer()
     if (this is Document) {
@@ -108,11 +104,10 @@ private fun Transformer.addNoXmlDeclaration(): Transformer {
 /*
 * Check the document for schema compliance
 * */
-@Throws(IOException::class, SAXException::class)
-fun schemaValidation(schema: Schema, document: Document): Boolean {
+fun Element.schemaValidation(schema: Schema): Boolean {
 
     val validator = schema.newValidator()
-    validator.validate(DOMSource(document))
+    validator.validate(DOMSource(this))
 
     return true
 }
@@ -173,10 +168,10 @@ fun Element.findAllElementByXpath(sXpath: String): List<Element> {
  * Add new nested single-level node
  *
  * @param name - The name of creating node
- * @param namespace - The namespace of creating node
  * @param value - The text value of creating node
+ * @param namespace - The namespace of creating node
  * */
-fun Element.add(name: String, namespace: String? = null, value: String? = null): Element {
+fun Element.add(name: String, value: String? = null, namespace: String? = null): Element {
 
     val element = if (namespace == null) {
         this.ownerDocument.createElement(name)
@@ -191,19 +186,22 @@ fun Element.add(name: String, namespace: String? = null, value: String? = null):
 }
 
 /**
- * Add a new single-level node with disabling escaping of the specified symbol
+ * Add a new single-level node with disabling escaping of the specified symbol.
+ * For example symbol "&" in node value will be escaped by "&amp;".
  *
  * @param name - The name of creating node
- * @param namespace - The namespace of creating node
+ * @param escapedSymbol - The symbol that needs to be escaped
  * @param value - The text value of creating node
- * @param escapedSymbol - The symbol that needs to be escaped.
+ * @param namespace - The namespace of creating node
  * */
-fun Element.addWithDisabledEscaping(name: String, namespace: String? = null, value: String? = null,
-                                    escapedSymbol: String) {
+fun Element.addWithDisabledEscaping(
+    name: String, escapedSymbol: String, value: String? = null,
+    namespace: String? = null
+) {
     val disableEscaping =
         this.ownerDocument.createProcessingInstruction(StreamResult.PI_DISABLE_OUTPUT_ESCAPING, escapedSymbol)
     this.appendChild(disableEscaping)
-    this.add(name, namespace, value)
+    this.add(name, value, namespace)
     val enableEscaping =
         this.ownerDocument.createProcessingInstruction(StreamResult.PI_ENABLE_OUTPUT_ESCAPING, escapedSymbol)
     this.appendChild(enableEscaping)
@@ -223,7 +221,8 @@ fun Element.addClone(element: Element): Element {
 
 fun NodeList.asList(): List<Element> {
     return IntStream.range(0, this.length)
-        .mapToObj { index: Int -> this.item(index) as Element }
+        .filter { index -> this.item(index) is Element }
+        .mapToObj { index -> this.item(index) as Element }
         .collect(Collectors.toList())
 }
 

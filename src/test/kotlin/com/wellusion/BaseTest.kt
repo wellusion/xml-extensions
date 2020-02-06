@@ -1,30 +1,32 @@
 package com.wellusion
 
 import org.apache.commons.io.IOUtils
-import org.junit.Assert.assertNotNull
+import org.junit.Assert
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
 
 open class BaseTest {
 
     companion object {
-        const val testDocumentPath = "commonTestDocument.xml"
-        val testDocument = getResourceAsString(testDocumentPath)
+        const val testDocumentPath = "testDocument.xml"
+        const val testDocumentNoNsPath = "testDocumentNoNs.xml"
+        const val testSchemaNoNsPath = "testSchemaNoNs.xml"
 
-        const val testSchemaPath = "commonTestSchema.xml"
-        val testSchema = getResourceAsString(testSchemaPath)
+        val testDocument = getResourceAsString(testDocumentPath)
+        val testDocumentNoNs = getResourceAsString(testDocumentNoNsPath)
+        val testSchemaNoNs = getResourceAsString(testSchemaNoNsPath)
 
         private fun getResourceAsString(path: String): String {
             val classLoader: ClassLoader = this::class.java.classLoader
             val resourceUrl = classLoader.getResource(path)
-            assertNotNull(resourceUrl)
+            Assert.assertNotNull(resourceUrl)
             return IOUtils.toString(resourceUrl, StandardCharsets.UTF_8)
         }
 
         fun getResourceAsStream(path: String): InputStream {
             val classLoader: ClassLoader = this::class.java.classLoader
             val resource = classLoader.getResourceAsStream(path)
-            assertNotNull(resource)
+            Assert.assertNotNull(resource)
             return resource!!
         }
     }
