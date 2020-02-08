@@ -1,4 +1,4 @@
-package com.wellusion
+package wellusion
 
 import org.slf4j.LoggerFactory
 import org.w3c.dom.Document

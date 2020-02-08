@@ -1,4 +1,4 @@
-package com.wellusion
+package wellusion
 
 import org.apache.commons.io.IOUtils
 import org.junit.Assert

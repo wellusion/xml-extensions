@@ -1,4 +1,4 @@
-package com.wellusion
+package wellusion
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -3,8 +3,8 @@ plugins {
     id 'maven'
 }
 
-group 'com.wellusion'
-version '1.0-SNAPSHOT'
+group 'wellusion'
+version '0.1'
 //jar.baseName = 'xml-extension'
 
 repositories {
