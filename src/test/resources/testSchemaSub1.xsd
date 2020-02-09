@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ns2="http://someaddress2" elementFormDefault="qualified" targetNamespace="http://someaddress1"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:import schemaLocation="testSchemaSub2.xsd" namespace="http://someaddress2"/>
+    <xs:element name="child7" type="xs:string"/>
+    <xs:element name="child8">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ns2:child8-1"/>
+            </xs:sequence>
+            <xs:attribute name="child8-attr1" type="xs:string" use="required"/>
+            <xs:attribute name="child8-attr2" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

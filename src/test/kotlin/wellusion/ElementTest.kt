@@ -50,6 +50,23 @@ class ElementTest : BaseTest() {
         elements = document.documentElement.getElementsByTagNameNS("*", "child7")
         Assert.assertEquals(1, elements.length)
         Assert.assertEquals(someValue, elements.item(0).textContent)
+
+        Assert.assertThrows(java.lang.Exception::class.java) {
+            document.documentElement.setValueToElement("notExistChild", someValue)
+        }
+    }
+
+    @Test
+    fun setValueToElementIfExist() {
+        val document = ElementExt.createDocument(testDocument)
+        val someValue = "someValue"
+
+        document.documentElement.setValueToElementIfExist("child1", someValue)
+        val elements = document.documentElement.getElementsByTagName("child1")
+        Assert.assertEquals(1, elements.length)
+        Assert.assertEquals(someValue, elements.item(0).textContent)
+
+        Assert.assertEquals(null, document.documentElement.setValueToElementIfExist("notExistChild", someValue))
     }
 
     @Test
@@ -66,8 +83,10 @@ class ElementTest : BaseTest() {
     fun schemaValidation() {
         val document = ElementExt.createDocument(testDocumentNoNs)
         val schema = ElementExt.createSchema(testSchemaNoNs)
+        val wrongSchema = ElementExt.createSchema(testSchemaSub2, testSchemaSub1, testSchema)
 
         Assert.assertTrue(document.documentElement.schemaValidation(schema))
+        Assert.assertFalse(document.documentElement.schemaValidation(wrongSchema))
     }
 
     @Test
@@ -164,7 +183,8 @@ class ElementTest : BaseTest() {
         val nodeList: NodeList? = document.documentElement.getElementsByTagName("child6")?.item(0)?.childNodes
         Assert.assertNotNull(nodeList)
 
-        val elementsCount = IntStream.range(0, nodeList!!.length).filter { nodeList.item(it) is Element }.count().toInt()
+        val elementsCount =
+            IntStream.range(0, nodeList!!.length).filter { nodeList.item(it) is Element }.count().toInt()
 
         Assert.assertEquals(elementsCount, nodeList.asList().size)
     }

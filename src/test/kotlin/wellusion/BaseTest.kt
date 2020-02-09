@@ -9,12 +9,18 @@ open class BaseTest {
 
     companion object {
         const val testDocumentPath = "testDocument.xml"
-        const val testDocumentNoNsPath = "testDocumentNoNs.xml"
-        const val testSchemaNoNsPath = "testSchemaNoNs.xml"
+        private const val testDocumentNoNsPath = "testDocumentNoNs.xml"
+        private const val testSchemaNoNsPath = "testSchemaNoNs.xsd"
+        private const val testSchemaPath = "testSchema.xsd"
+        private const val testSchemaSub1Path = "testSchemaSub1.xsd"
+        private const val testSchemaSub2Path = "testSchemaSub2.xsd"
 
         val testDocument = getResourceAsString(testDocumentPath)
         val testDocumentNoNs = getResourceAsString(testDocumentNoNsPath)
         val testSchemaNoNs = getResourceAsString(testSchemaNoNsPath)
+        val testSchema = getResourceAsString(testSchemaPath)
+        val testSchemaSub1 = getResourceAsString(testSchemaSub1Path)
+        val testSchemaSub2 = getResourceAsString(testSchemaSub2Path)
 
         private fun getResourceAsString(path: String): String {
             val classLoader: ClassLoader = this::class.java.classLoader

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ns1="http://someaddress1" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:import schemaLocation="testSchemaSub1.xsd" namespace="http://someaddress1"/>
+    <xs:element name="testXmlDocument">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="child1"/>
+                <xs:element name="child2">
+                    <xs:complexType>
+                        <xs:attribute name="child2-attr1" type="xs:string" use="required"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="child3">
+                    <xs:complexType>
+                        <xs:attribute name="child3-attr1" type="xs:string" use="required"/>
+                        <xs:attribute name="child3-attr2" type="xs:string" use="required"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="child4" type="xs:string"/>
+                <xs:element name="child5" type="xs:string"/>
+                <xs:element name="child6">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="child6-1"/>
+                            <xs:element name="child6-2">
+                                <xs:complexType>
+                                    <xs:attribute name="child6-2-attr1" type="xs:string" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="child6-3">
+                                <xs:complexType>
+                                    <xs:attribute name="child6-3-attr1" type="xs:string" use="required"/>
+                                    <xs:attribute name="child3-attr2" type="xs:string" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="child6-4" type="xs:string"/>
+                            <xs:element name="child6-5" type="xs:string"/>
+                        </xs:sequence>
+                        <xs:attribute name="child6-attr1" type="xs:string" use="required"/>
+                        <xs:attribute name="child6-attr2" type="xs:string" use="required"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element ref="ns1:child7"/>
+                <xs:element ref="ns1:child8"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

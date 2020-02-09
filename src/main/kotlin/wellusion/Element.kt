@@ -63,13 +63,18 @@ fun Element.findElementByNameIfExist(name: String): Element? {
 /*
 * Find nested single-level element by its name without a given namespace and set specified value.
 * */
-fun Element.setValueToElement(name: String, value: String) {
-    val childElement = this.findElementByName(name)
-    childElement.textContent = value
+fun Element.setValueToElementIfExist(name: String, value: String): Element? {
+    val childElement = this.findElementByNameIfExist(name)
+    childElement?.textContent = value
+    return childElement
+}
+
+fun Element.setValueToElement(name: String, value: String): Element {
+    return this.setValueToElementIfExist(name, value)!!
 }
 
 /*
-* Represent element as a string
+* Represent the element as a string
 * */
 @Throws(TransformerException::class)
 fun Element.asString(): String {
@@ -107,8 +112,12 @@ private fun Transformer.addNoXmlDeclaration(): Transformer {
 fun Element.schemaValidation(schema: Schema): Boolean {
 
     val validator = schema.newValidator()
-    validator.validate(DOMSource(this))
-
+    try {
+        validator.validate(DOMSource(this))
+    } catch (e: Exception) {
+        LOG.error("Schema validation error: ${e.message}. Stacktrace:${e.stackTrace}")
+        return false
+    }
     return true
 }
 
@@ -120,6 +129,7 @@ fun Element.findElementByXpath(sXpath: String): Element {
     if (elements.isEmpty()) {
         throw Exception("Xml elements by xPath: $sXpath not found.")
     }
+    moreThenOneElementWarning(elements)
     return elements[0]
 }
 
@@ -131,7 +141,14 @@ fun Element.findElementByXpathIfExist(sXpath: String): Element? {
     return if (elements.isEmpty()) {
         null
     } else {
+        moreThenOneElementWarning(elements)
         elements[0]
+    }
+}
+
+private fun moreThenOneElementWarning(elements: List<Element>) {
+    if (elements.size > 1) {
+        LOG.warn("Found more than one element. The first one will be returned.")
     }
 }
 
@@ -155,11 +172,15 @@ fun Element.findAllElementByXpath(sXpath: String): List<Element> {
     val filterElementList = ArrayList<Element>()
     for (i in 0 until nodeList.length) {
         val node = nodeList.item(i)
-        filterElementList.add(node as Element)
+        if (node !is Element) {
+            LOG.info("Node with name \"${node.localName}\" isn't an Element.")
+            continue
+        }
+        filterElementList.add(node)
     }
 
     if (filterElementList.size == 0) {
-        LOG.warn("Xml elements by xPath: $sXpath not found.")
+        LOG.info("Xml elements by xPath: $sXpath not found.")
     }
     return filterElementList
 }
@@ -194,10 +215,8 @@ fun Element.add(name: String, value: String? = null, namespace: String? = null):
  * @param value - The text value of creating node
  * @param namespace - The namespace of creating node
  * */
-fun Element.addWithDisabledEscaping(
-    name: String, escapedSymbol: String, value: String? = null,
-    namespace: String? = null
-) {
+fun Element.addWithDisabledEscaping(name: String, escapedSymbol: String, value: String? = null,
+                                    namespace: String? = null) {
     val disableEscaping =
         this.ownerDocument.createProcessingInstruction(StreamResult.PI_DISABLE_OUTPUT_ESCAPING, escapedSymbol)
     this.appendChild(disableEscaping)
@@ -211,7 +230,7 @@ fun Element.addWithDisabledEscaping(
  * Add a clone of given node
  *
  * @param element - Appended node
- * @return The link to appended node
+ * @return The link to an appended node
  * */
 fun Element.addClone(element: Element): Element {
     val clone = this.ownerDocument.importNode(element, true) as Element
@@ -239,18 +258,24 @@ class ElementExt {
         }
 
         private fun getDocumentBuilder(): DocumentBuilder {
-            val dbf = DocumentBuilderFactory.newInstance()
-            dbf.isNamespaceAware = true
-            return dbf.newDocumentBuilder()
+            val documentBuilderFactory = DocumentBuilderFactory.newInstance()
+            documentBuilderFactory.isNamespaceAware = true
+            return documentBuilderFactory.newDocumentBuilder()
         }
 
         /*
-        * Create an schema from string
+        * Creating a schema from a few string names.
+        *
+        * If the result scheme has to consist of a few schemes then you should specify all of them. Note that the sequence
+        * of schemes is important: if the scheme №1 includes elements from the scheme №2, then the scheme №2 must be
+        * specified first, and then - scheme №1.
         * */
-        fun createSchema(sScheme: String): Schema {
+        fun createSchema(vararg sSchemes: String): Schema {
             val factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
-            val streamSource = StreamSource(ByteArrayInputStream(sScheme.toByteArray(StandardCharsets.UTF_8)))
-            return factory.newSchema(streamSource)
+            val streamSources = sSchemes.map { sScheme ->
+                StreamSource(ByteArrayInputStream(sScheme.toByteArray(StandardCharsets.UTF_8)))
+            }.toTypedArray()
+            return factory.newSchema(streamSources)
         }
     }
 }
