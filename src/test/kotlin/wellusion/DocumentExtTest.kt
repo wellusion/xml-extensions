@@ -3,25 +3,19 @@ package wellusion
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class ElementExtTest : BaseTest() {
+class DocumentExtTest : BaseTest() {
 
     @Test
     fun createDocumentFromString() {
-        val document = ElementExt.createDocument(testDocument)
+        val document = DocumentExt.createDocument(testDocument)
         assertEquals(document.firstChild.localName, "testXmlDocument")
     }
 
     @Test
     fun createDocumentFromInputStream() {
         val document = getResourceAsStream(testDocumentPath).use { inputStream ->
-            ElementExt.createDocument(inputStream)
+            DocumentExt.createDocument(inputStream)
         }
         assertEquals(document.firstChild.localName, "testXmlDocument")
-    }
-
-    @Test
-    fun createSchema() {
-        ElementExt.createSchema(testSchemaNoNs)
-        ElementExt.createSchema(testSchemaSub2, testSchemaSub1, testSchema)
     }
 }

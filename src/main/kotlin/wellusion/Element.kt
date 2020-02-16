@@ -3,12 +3,11 @@ package wellusion
 import org.slf4j.LoggerFactory
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.StringWriter
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.Transformer
-import javax.xml.transform.TransformerConfigurationException
-import javax.xml.transform.TransformerException
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
@@ -142,7 +141,7 @@ fun Element.schemaValidation(schema: Schema): Boolean {
  * @throws NullPointerException if no element was found.
  */
 fun Element.findElementByXpath(sXpath: String): Element {
-    val elements = this.findAllElementByXpath(sXpath)
+    val elements = this.findAllElementsByXpath(sXpath)
     if (elements.isEmpty()) {
         throw Exception("Xml elements by xPath: $sXpath not found.")
     }
@@ -157,7 +156,7 @@ fun Element.findElementByXpath(sXpath: String): Element {
  * @return The found element or null
  */
 fun Element.findElementByXpathIfExist(sXpath: String): Element? {
-    val elements = this.findAllElementByXpath(sXpath)
+    val elements = this.findAllElementsByXpath(sXpath)
     return if (elements.isEmpty()) {
         null
     } else {
@@ -179,7 +178,7 @@ private fun moreThenOneElementWarning(elements: List<Element>) {
  * @return Whether the element exists.
  */
 fun Element.hasElementByXpath(sXpath: String): Boolean {
-    val elements = this.findAllElementByXpath(sXpath)
+    val elements = this.findAllElementsByXpath(sXpath)
     return elements.isNotEmpty()
 }
 
@@ -189,7 +188,7 @@ fun Element.hasElementByXpath(sXpath: String): Boolean {
  * @param sXpath XPath string to search for elements
  * @return List of finding elements
  */
-fun Element.findAllElementByXpath(sXpath: String): List<Element> {
+fun Element.findAllElementsByXpath(sXpath: String): List<Element> {
     val xPathFactory = XPathFactory.newInstance()
     val xpath = xPathFactory.newXPath()
     val xPathExpression = xpath.compile(sXpath)
@@ -265,3 +264,55 @@ fun Element.addClone(element: Element): Element {
     this.appendChild(clone)
     return clone
 }
+
+/**
+ * Find all nested single-level element by attribute name
+ *
+ * @param attrName Attribute name for search
+ * @return List of found elements
+ */
+fun Element.findAllElementsByAttr(attrName: String): List<Element> {
+    return this.findAllElementsByXpath("*[@$attrName]")
+}
+
+/**
+ * Find all nested single-level element by name
+ *
+ * @param name Element name for searching
+ * @return List of found elements
+ */
+fun Element.findAllElementsByName(name: String): List<Element> {
+    return this.findAllElementsByXpath(name)
+}
+
+/**
+ * Getting an attribute by name
+ * todo Not realized element interface. 
+ *
+ * @param attrName Attribute name
+ * @return Found element
+ */
+fun Element.getAttr(attrName: String): Node? {
+    val attrs = this.attributes
+    if (attrs == null || attrs.length == 0) {
+        LOG.warn("Element by name \"${this.nodeName}\" hasn't attributes.")
+        return null
+    }
+    val attr = attrs.getNamedItem(attrName)
+    if (attr == null) {
+        LOG.warn("Attribute by name: \"$attrName\" not found in the node \"${this.nodeName}\"")
+    }
+    return attr
+}
+
+/**
+ * Getting value of an attribute by his name
+ *
+ * @param attrName Attribute name
+ * @return Value of found attribute
+ */
+fun Element.getAttrValue(attrName: String): String? {
+    val attr = this.getAttr(attrName)
+    return attr?.textContent?.trim()
+}
+

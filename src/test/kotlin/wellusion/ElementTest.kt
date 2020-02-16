@@ -10,7 +10,7 @@ class ElementTest : BaseTest() {
 
     @Test
     fun findElementByName() {
-        val document = ElementExt.createDocument(testDocument)
+        val document = DocumentExt.createDocument(testDocument)
         var element = document.documentElement.findElementByName("child4")
         assert(element.textContent == "child4-value")
 
@@ -24,7 +24,7 @@ class ElementTest : BaseTest() {
 
     @Test
     fun findElementByNameIfExist() {
-        val document = ElementExt.createDocument(testDocument)
+        val document = DocumentExt.createDocument(testDocument)
         var element = document.documentElement.findElementByNameIfExist("child4")
         Assert.assertNotNull(element)
         assert(element!!.textContent == "child4-value")
@@ -38,7 +38,7 @@ class ElementTest : BaseTest() {
 
     @Test
     fun setValueToElement() {
-        val document = ElementExt.createDocument(testDocument)
+        val document = DocumentExt.createDocument(testDocument)
         val someValue = "someValue"
 
         document.documentElement.setValueToElement("child1", someValue)
@@ -58,7 +58,7 @@ class ElementTest : BaseTest() {
 
     @Test
     fun setValueToElementIfExist() {
-        val document = ElementExt.createDocument(testDocument)
+        val document = DocumentExt.createDocument(testDocument)
         val someValue = "someValue"
 
         document.documentElement.setValueToElementIfExist("child1", someValue)
@@ -71,7 +71,7 @@ class ElementTest : BaseTest() {
 
     @Test
     fun asString() {
-        val document = ElementExt.createDocument(testDocument)
+        val document = DocumentExt.createDocument(testDocument)
         val sDocument = document.documentElement.asString()
 
         // The strings sDocument and testDocument don't compare here because a document as a string after
@@ -81,9 +81,9 @@ class ElementTest : BaseTest() {
 
     @Test
     fun schemaValidation() {
-        val document = ElementExt.createDocument(testDocumentNoNs)
-        val schema = ElementExt.createSchema(testSchemaNoNs)
-        val wrongSchema = ElementExt.createSchema(testSchemaSub2, testSchemaSub1, testSchema)
+        val document = DocumentExt.createDocument(testDocumentNoNs)
+        val schema = SchemaExt.createSchema(testSchemaNoNs)
+        val wrongSchema = SchemaExt.createSchema(testSchemaSub2, testSchemaSub1, testSchema)
 
         Assert.assertTrue(document.documentElement.schemaValidation(schema))
         Assert.assertFalse(document.documentElement.schemaValidation(wrongSchema))
@@ -91,7 +91,7 @@ class ElementTest : BaseTest() {
 
     @Test
     fun findElementByXpath() {
-        val document = ElementExt.createDocument(testDocument)
+        val document = DocumentExt.createDocument(testDocument)
         val element = document.documentElement.findElementByXpath("/testXmlDocument/*[local-name()='child7']")
         Assert.assertTrue(element.textContent == "child7-value")
 
@@ -102,7 +102,7 @@ class ElementTest : BaseTest() {
 
     @Test
     fun findElementByXpathIfExist() {
-        val document = ElementExt.createDocument(testDocument)
+        val document = DocumentExt.createDocument(testDocument)
         val element = document.documentElement.findElementByXpathIfExist("/testXmlDocument/*[local-name()='child7']")
         Assert.assertNotNull(element)
         Assert.assertTrue(element!!.textContent == "child7-value")
@@ -112,24 +112,24 @@ class ElementTest : BaseTest() {
 
     @Test
     fun hasElementByXpath() {
-        val document = ElementExt.createDocument(testDocument)
+        val document = DocumentExt.createDocument(testDocument)
         Assert.assertTrue(document.documentElement.hasElementByXpath("/testXmlDocument/*[local-name()='child7']"))
         Assert.assertFalse(document.documentElement.hasElementByXpath("/testXmlDocument1"))
     }
 
     @Test
     fun findAllElementByXpath() {
-        val document = ElementExt.createDocument(testDocument)
-        var elements = document.documentElement.findAllElementByXpath("/testXmlDocument/*[local-name()='child6']/*")
+        val document = DocumentExt.createDocument(testDocument)
+        var elements = document.documentElement.findAllElementsByXpath("/testXmlDocument/*[local-name()='child6']/*")
         Assert.assertEquals(5, elements.size)
 
-        elements = document.documentElement.findAllElementByXpath("/testXmlDocument1/*")
+        elements = document.documentElement.findAllElementsByXpath("/testXmlDocument1/*")
         Assert.assertEquals(0, elements.size)
     }
 
     @Test
     fun add() {
-        val document = ElementExt.createDocument(testDocument)
+        val document = DocumentExt.createDocument(testDocument)
         document.documentElement.add("newNode", "newNodeValue")
         var element = document.documentElement.findElementByName("newNode")
         Assert.assertEquals("newNodeValue", element.textContent)
@@ -141,7 +141,7 @@ class ElementTest : BaseTest() {
 
     @Test
     fun addWithDisabledEscaping() {
-        var document = ElementExt.createDocument(testDocument)
+        var document = DocumentExt.createDocument(testDocument)
         var child1 = document.documentElement.findElementByName("child1")
         child1.add("newNode", "newNode&Value")
 
@@ -151,7 +151,7 @@ class ElementTest : BaseTest() {
             child1.asString().replace("[\n\r]".toRegex(), "")
         )
 
-        document = ElementExt.createDocument(testDocument)
+        document = DocumentExt.createDocument(testDocument)
         child1 = document.documentElement.findElementByName("child1")
         child1.addWithDisabledEscaping(
             "newNode", "&",
@@ -167,10 +167,10 @@ class ElementTest : BaseTest() {
 
     @Test
     fun addClone() {
-        val document = ElementExt.createDocument(testDocument)
+        val document = DocumentExt.createDocument(testDocument)
         val newElement = document.documentElement.add("newElement")
 
-        val newDocument = ElementExt.createDocument(testDocument)
+        val newDocument = DocumentExt.createDocument(testDocument)
         val child1 = newDocument.documentElement.findElementByName("child1")
         child1.addClone(newElement)
 
@@ -178,14 +178,39 @@ class ElementTest : BaseTest() {
     }
 
     @Test
-    fun asList() {
-        val document = ElementExt.createDocument(testDocument)
-        val nodeList: NodeList? = document.documentElement.getElementsByTagName("child6")?.item(0)?.childNodes
-        Assert.assertNotNull(nodeList)
+    fun findAllElementsByAttr() {
+        val document = DocumentExt.createDocument(testDocument)
+        val child6 = document.documentElement.findElementByName("child6")
+        Assert.assertEquals(1, child6.findAllElementsByAttr("child6-2-attr1").size)
+        Assert.assertEquals(0, child6.findAllElementsByAttr("child6-attr1").size)
+        Assert.assertEquals(0, child6.findAllElementsByAttr("child2-attr1").size)
+        Assert.assertEquals(0, document.documentElement.findAllElementsByAttr("child6-2-attr1").size)
+    }
 
-        val elementsCount =
-            IntStream.range(0, nodeList!!.length).filter { nodeList.item(it) is Element }.count().toInt()
+    @Test
+    fun findAllElementsByName() {
+        val document = DocumentExt.createDocument(testDocument)
+        Assert.assertEquals(1, document.documentElement.findAllElementsByName("child4").size)
+        Assert.assertEquals(0, document.documentElement.findAllElementsByName("child6-1").size)
+        val child6 = document.documentElement.findElementByName("child6")
+        Assert.assertEquals(0, child6.findAllElementsByName("child5").size)
+    }
 
-        Assert.assertEquals(elementsCount, nodeList.asList().size)
+    @Test
+    fun getAttr() {
+        val document = DocumentExt.createDocument(testDocument)
+        val child3 = document.documentElement.findElementByName("child3")
+        val attr = child3.getAttr("child3-attr1")
+        Assert.assertNotNull(attr)
+        Assert.assertEquals("child3-attr1-value", attr!!.nodeValue)
+        Assert.assertNull(child3.getAttr("notExistAttr"))
+    }
+
+    @Test
+    fun getAttrValue() {
+        val document = DocumentExt.createDocument(testDocument)
+        val child3 = document.documentElement.findElementByName("child3")
+        Assert.assertEquals("child3-attr1-value", child3.getAttrValue("child3-attr1"))
+        Assert.assertNull(child3.getAttrValue("notExistAttr"))
     }
 }
