@@ -14,6 +14,7 @@ open class BaseTest {
         private const val testSchemaPath = "testSchema.xsd"
         private const val testSchemaSub1Path = "testSchemaSub1.xsd"
         private const val testSchemaSub2Path = "testSchemaSub2.xsd"
+        private const val testXsltPath = "XsltTemplate.xsl"
 
         val testDocument = getResourceAsString(testDocumentPath)
         val testDocumentNoNs = getResourceAsString(testDocumentNoNsPath)
@@ -21,6 +22,7 @@ open class BaseTest {
         val testSchema = getResourceAsString(testSchemaPath)
         val testSchemaSub1 = getResourceAsString(testSchemaSub1Path)
         val testSchemaSub2 = getResourceAsString(testSchemaSub2Path)
+        val testXslt = getResourceAsString(testXsltPath)
 
         private fun getResourceAsString(path: String): String {
             val classLoader: ClassLoader = this::class.java.classLoader

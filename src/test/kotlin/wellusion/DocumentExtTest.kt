@@ -18,4 +18,9 @@ class DocumentExtTest : BaseTest() {
         }
         assertEquals(document.firstChild.localName, "testXmlDocument")
     }
+
+    @Test
+    fun getDocumentBuilder() {
+        DocumentExt.getDocumentBuilder()
+    }
 }

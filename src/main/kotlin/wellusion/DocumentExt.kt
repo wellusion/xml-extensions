@@ -35,7 +35,12 @@ class DocumentExt {
             return documentBuilder.parse(streamDocument)
         }
 
-        private fun getDocumentBuilder(): DocumentBuilder {
+        /**
+         * Create a document builder
+         *
+         * @return Created document builder
+         */
+        fun getDocumentBuilder(): DocumentBuilder {
             val documentBuilderFactory = DocumentBuilderFactory.newInstance()
             documentBuilderFactory.isNamespaceAware = true
             return documentBuilderFactory.newDocumentBuilder()
