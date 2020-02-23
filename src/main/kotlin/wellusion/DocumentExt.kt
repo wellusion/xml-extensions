@@ -2,10 +2,14 @@ package wellusion
 
 import org.w3c.dom.Document
 import org.xml.sax.InputSource
+import java.io.File
+import java.io.FileWriter
 import java.io.InputStream
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 
 class DocumentExt {
     companion object {
@@ -44,6 +48,21 @@ class DocumentExt {
             val documentBuilderFactory = DocumentBuilderFactory.newInstance()
             documentBuilderFactory.isNamespaceAware = true
             return documentBuilderFactory.newDocumentBuilder()
+        }
+
+        /**
+         * Write the document to the file. Note: The specified file has to exist.
+         *
+         * @param file The file to write the document to.
+         * @param document The document for writing.
+         */
+        fun writeDocumentToFile(file: File, document: Document) {
+
+            FileWriter(file).use { writer ->
+                val result = StreamResult(writer)
+                val source = DOMSource(document)
+                TransformerExt.createXmlTransformer().transform(source, result)
+            }
         }
     }
 }

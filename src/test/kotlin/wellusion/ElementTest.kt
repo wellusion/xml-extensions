@@ -213,4 +213,26 @@ class ElementTest : BaseTest() {
         Assert.assertEquals("child3-attr1-value", child3.getAttrValue("child3-attr1"))
         Assert.assertNull(child3.getAttrValue("notExistAttr"))
     }
+
+    @Test
+    fun nodeBypass() {
+        val document = DocumentExt.createDocument(testDocument)
+        val dElement = document.documentElement!!
+        dElement.nodeBypass { element ->
+            if (element.childNodes.asList().isEmpty()) {
+                element.textContent = "replacedValue"
+            }
+        }
+        Assert.assertEquals("replacedValue", dElement.findElementByName("child4").textContent)
+        Assert.assertEquals("replacedValue", dElement.findElementByXpath("/testXmlDocument//*[local-name()='child6-1']").textContent)
+    }
+
+    @Test
+    fun remove() {
+        val document = DocumentExt.createDocument(testDocument)
+        val dElement = document.documentElement!!
+        val child4 = dElement.findElementByName("child4")
+        child4.remove()
+        Assert.assertNull(dElement.findElementByNameIfExist("child4"))
+    }
 }

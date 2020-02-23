@@ -8,7 +8,6 @@ import org.w3c.dom.NodeList
 import java.io.StringWriter
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.Transformer
-import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import javax.xml.validation.Schema
@@ -89,24 +88,12 @@ fun Element.setValueToElementIfExist(name: String, value: String): Element? {
  */
 fun Element.asString(): String {
     val stringWriter = StringWriter()
-    val transformer = getTransformer()
+    val transformer = TransformerExt.createXmlTransformer()
     if (this is Document) {
         transformer.addNoXmlDeclaration()
     }
     transformer.transform(DOMSource(this), StreamResult(stringWriter))
     return stringWriter.toString()
-}
-
-private fun getTransformer(): Transformer {
-    val transformerFactory = TransformerFactory.newInstance()
-    val transformer = transformerFactory.newTransformer()
-    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
-    transformer.setOutputProperty(OutputKeys.METHOD, "xml")
-    transformer.setOutputProperty(OutputKeys.INDENT, "yes")
-    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8")
-    transformer.setOutputProperty(OutputKeys.VERSION, "1.0")
-
-    return transformer
 }
 
 // If a document is used, then property OMIT_XML_DECLARATION have to have value "no"
@@ -316,3 +303,31 @@ fun Element.getAttrValue(attrName: String): String? {
     return attr?.textContent?.trim()
 }
 
+/**
+ * A recursive bypass of element tree with a custom function executing.
+ *
+ * @param consumer The custom function to execute on an every element in this element.
+ */
+fun Element.nodeBypass(consumer: (Element) -> Unit) {
+    val childElements: List<Element> = this.childNodes.asList()
+    childElements.forEach { element ->
+        element.nodeBypass(consumer)
+    }
+    consumer(this)
+}
+
+/**
+ * Remove the element from its parent element
+ *
+ * @return Whether the element was removed
+ */
+fun Element.remove(): Boolean {
+    val parent = this.parentNode as Element?
+    if (parent == null) {
+        LOG.warn("The node \"${this.nodeName}\" wasn't removed. Its parent node is null.")
+        return false
+    }
+    parent.removeChild(this)
+    LOG.info("The node \"${this.nodeName}\" is removed.")
+    return true
+}
