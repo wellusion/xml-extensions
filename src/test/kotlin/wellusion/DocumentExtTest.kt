@@ -35,7 +35,7 @@ class DocumentExtTest : BaseTest() {
 
             val targetFile = File(file.path)
             val targetDocument = DocumentExt.getDocumentBuilder().parse(targetFile)
-            val child4 = targetDocument.documentElement.findElementByName("child4")
+            val child4 = targetDocument.documentElement.ext.findElementByName("child4")
             assertEquals("child4-value", child4.textContent)
         } finally {
             file?.delete()

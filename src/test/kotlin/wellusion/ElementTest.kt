@@ -2,38 +2,36 @@ package wellusion
 
 import org.junit.Assert
 import org.junit.Test
-import org.w3c.dom.Element
-import org.w3c.dom.NodeList
-import java.util.stream.IntStream
 
 class ElementTest : BaseTest() {
 
     @Test
     fun findElementByName() {
         val document = DocumentExt.createDocument(testDocument)
-        var element = document.documentElement.findElementByName("child4")
+        var element = document.documentElement.ext.findElementByName("child4")
         assert(element.textContent == "child4-value")
 
         Assert.assertThrows(KotlinNullPointerException::class.java) {
-            document.documentElement.findElementByName("notExistingChild")
+            document.documentElement.ext.findElementByName("notExistingChild")
         }
 
-        element = document.documentElement.findElementByName("child7")
+        element = document.documentElement.ext.findElementByName("child7")
         assert(element.textContent == "child7-value")
     }
 
     @Test
     fun findElementByNameIfExist() {
         val document = DocumentExt.createDocument(testDocument)
-        var element = document.documentElement.findElementByNameIfExist("child4")
+        var element = document.documentElement.ext.findElementByNameIfExist("child4")
         Assert.assertNotNull(element)
         assert(element!!.textContent == "child4-value")
 
-        element = document.documentElement.findElementByNameIfExist("notExistingChild")
+        element = document.documentElement.ext.findElementByNameIfExist("notExistingChild")
         Assert.assertNull(element)
 
-        element = document.documentElement.findElementByName("child7")
-        assert(element.textContent == "child7-value")
+        element = document.documentElement.ext.findElementByNameIfExist("child7")
+        Assert.assertNotNull(element)
+        assert(element!!.textContent == "child7-value")
     }
 
     @Test
@@ -41,18 +39,18 @@ class ElementTest : BaseTest() {
         val document = DocumentExt.createDocument(testDocument)
         val someValue = "someValue"
 
-        document.documentElement.setValueToElement("child1", someValue)
+        document.documentElement.ext.setValueToElement("child1", someValue)
         var elements = document.documentElement.getElementsByTagName("child1")
         Assert.assertEquals(1, elements.length)
         Assert.assertEquals(someValue, elements.item(0).textContent)
 
-        document.documentElement.setValueToElement("child7", someValue)
+        document.documentElement.ext.setValueToElement("child7", someValue)
         elements = document.documentElement.getElementsByTagNameNS("*", "child7")
         Assert.assertEquals(1, elements.length)
         Assert.assertEquals(someValue, elements.item(0).textContent)
 
         Assert.assertThrows(java.lang.Exception::class.java) {
-            document.documentElement.setValueToElement("notExistChild", someValue)
+            document.documentElement.ext.setValueToElement("notExistChild", someValue)
         }
     }
 
@@ -61,18 +59,18 @@ class ElementTest : BaseTest() {
         val document = DocumentExt.createDocument(testDocument)
         val someValue = "someValue"
 
-        document.documentElement.setValueToElementIfExist("child1", someValue)
+        document.documentElement.ext.setValueToElementIfExist("child1", someValue)
         val elements = document.documentElement.getElementsByTagName("child1")
         Assert.assertEquals(1, elements.length)
         Assert.assertEquals(someValue, elements.item(0).textContent)
 
-        Assert.assertEquals(null, document.documentElement.setValueToElementIfExist("notExistChild", someValue))
+        Assert.assertEquals(null, document.documentElement.ext.setValueToElementIfExist("notExistChild", someValue))
     }
 
     @Test
     fun asString() {
         val document = DocumentExt.createDocument(testDocument)
-        val sDocument = document.documentElement.asString()
+        val sDocument = document.documentElement.ext.asString()
 
         // The strings sDocument and testDocument don't compare here because a document as a string after
         // transformations may have mixed nodes or attributes.
@@ -85,75 +83,75 @@ class ElementTest : BaseTest() {
         val schema = SchemaExt.createSchema(testSchemaNoNs)
         val wrongSchema = SchemaExt.createSchema(testSchemaSub2, testSchemaSub1, testSchema)
 
-        Assert.assertTrue(document.documentElement.schemaValidation(schema))
-        Assert.assertFalse(document.documentElement.schemaValidation(wrongSchema))
+        Assert.assertTrue(document.documentElement.ext.schemaValidation(schema))
+        Assert.assertFalse(document.documentElement.ext.schemaValidation(wrongSchema))
     }
 
     @Test
     fun findElementByXpath() {
         val document = DocumentExt.createDocument(testDocument)
-        val element = document.documentElement.findElementByXpath("/testXmlDocument/*[local-name()='child7']")
+        val element = document.documentElement.ext.findElementByXpath("/testXmlDocument/*[local-name()='child7']")
         Assert.assertTrue(element.textContent == "child7-value")
 
         Assert.assertThrows(Exception::class.java) {
-            document.documentElement.findElementByXpath("/testXmlDocument1")
+            document.documentElement.ext.findElementByXpath("/testXmlDocument1")
         }
     }
 
     @Test
     fun findElementByXpathIfExist() {
         val document = DocumentExt.createDocument(testDocument)
-        val element = document.documentElement.findElementByXpathIfExist("/testXmlDocument/*[local-name()='child7']")
+        val element = document.documentElement.ext.findElementByXpathIfExist("/testXmlDocument/*[local-name()='child7']")
         Assert.assertNotNull(element)
         Assert.assertTrue(element!!.textContent == "child7-value")
 
-        Assert.assertNull(document.documentElement.findElementByXpathIfExist("/testXmlDocument1"))
+        Assert.assertNull(document.documentElement.ext.findElementByXpathIfExist("/testXmlDocument1"))
     }
 
     @Test
     fun hasElementByXpath() {
         val document = DocumentExt.createDocument(testDocument)
-        Assert.assertTrue(document.documentElement.hasElementByXpath("/testXmlDocument/*[local-name()='child7']"))
-        Assert.assertFalse(document.documentElement.hasElementByXpath("/testXmlDocument1"))
+        Assert.assertTrue(document.documentElement.ext.hasElementByXpath("/testXmlDocument/*[local-name()='child7']"))
+        Assert.assertFalse(document.documentElement.ext.hasElementByXpath("/testXmlDocument1"))
     }
 
     @Test
     fun findAllElementByXpath() {
         val document = DocumentExt.createDocument(testDocument)
-        var elements = document.documentElement.findAllElementsByXpath("/testXmlDocument/*[local-name()='child6']/*")
+        var elements = document.documentElement.ext.findAllElementsByXpath("/testXmlDocument/*[local-name()='child6']/*")
         Assert.assertEquals(5, elements.size)
 
-        elements = document.documentElement.findAllElementsByXpath("/testXmlDocument1/*")
+        elements = document.documentElement.ext.findAllElementsByXpath("/testXmlDocument1/*")
         Assert.assertEquals(0, elements.size)
     }
 
     @Test
     fun add() {
         val document = DocumentExt.createDocument(testDocument)
-        document.documentElement.add("newNode", "newNodeValue")
-        var element = document.documentElement.findElementByName("newNode")
+        document.documentElement.ext.add("newNode", "newNodeValue")
+        var element = document.documentElement.ext.findElementByName("newNode")
         Assert.assertEquals("newNodeValue", element.textContent)
 
-        document.documentElement.add("newNode1", "newNode1Value", "someNameSpace")
-        element = document.documentElement.findElementByName("newNode1")
+        document.documentElement.ext.add("newNode1", "newNode1Value", "someNameSpace")
+        element = document.documentElement.ext.findElementByName("newNode1")
         Assert.assertEquals("newNode1Value", element.textContent)
     }
 
     @Test
     fun addWithDisabledEscaping() {
         var document = DocumentExt.createDocument(testDocument)
-        var child1 = document.documentElement.findElementByName("child1")
-        child1.add("newNode", "newNode&Value")
+        var child1 = document.documentElement.ext.findElementByName("child1")
+        child1.ext.add("newNode", "newNode&Value")
 
         // Without disabled escaping symbol "&" is replaced by "&amp;"
         Assert.assertEquals(
             "<child1><newNode>newNode&amp;Value</newNode></child1>",
-            child1.asString().replace("[\n\r]".toRegex(), "")
+            child1.ext.asString().replace("[\n\r]".toRegex(), "")
         )
 
         document = DocumentExt.createDocument(testDocument)
-        child1 = document.documentElement.findElementByName("child1")
-        child1.addWithDisabledEscaping(
+        child1 = document.documentElement.ext.findElementByName("child1")
+        child1.ext.addWithDisabledEscaping(
             "newNode", "&",
             "newNode&Value"
         )
@@ -161,78 +159,78 @@ class ElementTest : BaseTest() {
         // And with disabled escaping symbol the "&" are remained "&"
         Assert.assertEquals(
             "<child1><newNode>newNode&Value</newNode></child1>",
-            child1.asString().replace("[\n\r]".toRegex(), "")
+            child1.ext.asString().replace("[\n\r]".toRegex(), "")
         )
     }
 
     @Test
     fun addClone() {
         val document = DocumentExt.createDocument(testDocument)
-        val newElement = document.documentElement.add("newElement")
+        val newElement = document.documentElement.ext.add("newElement")
 
         val newDocument = DocumentExt.createDocument(testDocument)
-        val child1 = newDocument.documentElement.findElementByName("child1")
-        child1.addClone(newElement)
+        val child1 = newDocument.documentElement.ext.findElementByName("child1")
+        child1.ext.addClone(newElement)
 
-        Assert.assertEquals("<child1><newElement/></child1>", child1.asString().replace("[\n\r]".toRegex(), ""))
+        Assert.assertEquals("<child1><newElement/></child1>", child1.ext.asString().replace("[\n\r]".toRegex(), ""))
     }
 
     @Test
     fun findAllElementsByAttr() {
         val document = DocumentExt.createDocument(testDocument)
-        val child6 = document.documentElement.findElementByName("child6")
-        Assert.assertEquals(1, child6.findAllElementsByAttr("child6-2-attr1").size)
-        Assert.assertEquals(0, child6.findAllElementsByAttr("child6-attr1").size)
-        Assert.assertEquals(0, child6.findAllElementsByAttr("child2-attr1").size)
-        Assert.assertEquals(0, document.documentElement.findAllElementsByAttr("child6-2-attr1").size)
+        val child6 = document.documentElement.ext.findElementByName("child6")
+        Assert.assertEquals(1, child6.ext.findAllElementsByAttr("child6-2-attr1").size)
+        Assert.assertEquals(0, child6.ext.findAllElementsByAttr("child6-attr1").size)
+        Assert.assertEquals(0, child6.ext.findAllElementsByAttr("child2-attr1").size)
+        Assert.assertEquals(0, document.documentElement.ext.findAllElementsByAttr("child6-2-attr1").size)
     }
 
     @Test
     fun findAllElementsByName() {
         val document = DocumentExt.createDocument(testDocument)
-        Assert.assertEquals(1, document.documentElement.findAllElementsByName("child4").size)
-        Assert.assertEquals(0, document.documentElement.findAllElementsByName("child6-1").size)
-        val child6 = document.documentElement.findElementByName("child6")
-        Assert.assertEquals(0, child6.findAllElementsByName("child5").size)
+        Assert.assertEquals(1, document.documentElement.ext.findAllElementsByName("child4").size)
+        Assert.assertEquals(0, document.documentElement.ext.findAllElementsByName("child6-1").size)
+        val child6 = document.documentElement.ext.findElementByName("child6")
+        Assert.assertEquals(0, child6.ext.findAllElementsByName("child5").size)
     }
 
     @Test
     fun getAttr() {
         val document = DocumentExt.createDocument(testDocument)
-        val child3 = document.documentElement.findElementByName("child3")
-        val attr = child3.getAttr("child3-attr1")
+        val child3 = document.documentElement.ext.findElementByName("child3")
+        val attr = child3.ext.getAttr("child3-attr1")
         Assert.assertNotNull(attr)
         Assert.assertEquals("child3-attr1-value", attr!!.nodeValue)
-        Assert.assertNull(child3.getAttr("notExistAttr"))
+        Assert.assertNull(child3.ext.getAttr("notExistAttr"))
     }
 
     @Test
     fun getAttrValue() {
         val document = DocumentExt.createDocument(testDocument)
-        val child3 = document.documentElement.findElementByName("child3")
-        Assert.assertEquals("child3-attr1-value", child3.getAttrValue("child3-attr1"))
-        Assert.assertNull(child3.getAttrValue("notExistAttr"))
+        val child3 = document.documentElement.ext.findElementByName("child3")
+        Assert.assertEquals("child3-attr1-value", child3.ext.getAttrValue("child3-attr1"))
+        Assert.assertNull(child3.ext.getAttrValue("notExistAttr"))
     }
 
     @Test
     fun nodeBypass() {
         val document = DocumentExt.createDocument(testDocument)
         val dElement = document.documentElement!!
-        dElement.nodeBypass { element ->
+        dElement.ext.nodeBypass { element ->
             if (element.childNodes.asList().isEmpty()) {
                 element.textContent = "replacedValue"
             }
         }
-        Assert.assertEquals("replacedValue", dElement.findElementByName("child4").textContent)
-        Assert.assertEquals("replacedValue", dElement.findElementByXpath("/testXmlDocument//*[local-name()='child6-1']").textContent)
+        Assert.assertEquals("replacedValue", dElement.ext.findElementByName("child4").textContent)
+        Assert.assertEquals("replacedValue", dElement.ext.findElementByXpath("/testXmlDocument//*[local-name()='child6-1']").textContent)
     }
 
     @Test
     fun remove() {
         val document = DocumentExt.createDocument(testDocument)
         val dElement = document.documentElement!!
-        val child4 = dElement.findElementByName("child4")
-        child4.remove()
-        Assert.assertNull(dElement.findElementByNameIfExist("child4"))
+        val child4 = dElement.ext.findElementByName("child4")
+        child4.ext.remove()
+        Assert.assertNull(dElement.ext.findElementByNameIfExist("child4"))
     }
 }

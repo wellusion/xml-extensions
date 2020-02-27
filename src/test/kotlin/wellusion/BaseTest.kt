@@ -14,7 +14,7 @@ open class BaseTest {
         private const val testSchemaPath = "testSchema.xsd"
         private const val testSchemaSub1Path = "testSchemaSub1.xsd"
         private const val testSchemaSub2Path = "testSchemaSub2.xsd"
-        private const val testXsltPath = "XsltTemplate.xsl"
+        private const val testXsltPath = "xsltTemplate.xsl"
 
         val testDocument = getResourceAsString(testDocumentPath)
         val testDocumentNoNs = getResourceAsString(testDocumentNoNsPath)

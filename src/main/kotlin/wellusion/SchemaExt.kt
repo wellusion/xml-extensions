@@ -21,9 +21,7 @@ class SchemaExt {
             val factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
             val streamSources = sSchemes.map { sScheme ->
                 StreamSource(
-                    ByteArrayInputStream(
-                        sScheme.toByteArray(StandardCharsets.UTF_8)
-                    )
+                    ByteArrayInputStream(sScheme.toByteArray(StandardCharsets.UTF_8))
                 )
             }.toTypedArray()
             return factory.newSchema(streamSources)

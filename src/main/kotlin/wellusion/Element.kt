@@ -7,327 +7,193 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.StringWriter
 import javax.xml.transform.OutputKeys
-import javax.xml.transform.Transformer
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import javax.xml.validation.Schema
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
-private val LOG = LoggerFactory.getLogger(Element::class.java)
+val Element.ext: ElementExt
+    get() = object : ElementExt() {
+        private val LOG = LoggerFactory.getLogger(Element::class.java)
 
-private fun Element.innerFindElementByName(name: String): Element? {
-    var targetElement: Element? = null
-    val elementList = this.childNodes
-    for (i in 0 until elementList.length) {
-        val currentElement = elementList.item(i)
+        override fun findElementByName(name: String): Element {
+            return findElementByNameIfExist(name)!!
+        }
 
-        // Search in an element is performed with a prefix of a namespace. Remove it because it changes.
-        if (name == currentElement.nodeName.substringAfter(":")) {
-            targetElement = currentElement as Element
-            break
+        override fun findElementByNameIfExist(name: String): Element? {
+            var targetElement: Element? = null
+            val elementList = this@ext.childNodes
+            for (i in 0 until elementList.length) {
+                val currentElement = elementList.item(i)
+
+                // Search in an element is performed with a prefix of a namespace. Remove it because it changes.
+                if (name == currentElement.nodeName.substringAfter(":")) {
+                    targetElement = currentElement as Element
+                    break
+                }
+            }
+
+            if (targetElement == null) {
+                LOG.warn("Xml element by name: $name not found.")
+            }
+            return targetElement
+        }
+
+        override fun setValueToElement(name: String, value: String): Element {
+            return setValueToElementIfExist(name, value)!!
+        }
+
+        override fun setValueToElementIfExist(name: String, value: String): Element? {
+            val childElement = findElementByNameIfExist(name)
+            childElement?.textContent = value
+            return childElement
+        }
+
+        override fun asString(): String {
+            val stringWriter = StringWriter()
+            val transformer = TransformerExt.createXmlTransformer()
+            if (this@ext is Document) {
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no")
+            }
+            transformer.transform(DOMSource(this@ext), StreamResult(stringWriter))
+            return stringWriter.toString()
+        }
+
+        override fun schemaValidation(schema: Schema): Boolean {
+            val validator = schema.newValidator()
+            try {
+                validator.validate(DOMSource(this@ext))
+            } catch (e: Exception) {
+                LOG.error("Schema validation error: ${e.message}. Stacktrace:${e.stackTrace}")
+                return false
+            }
+            return true
+        }
+
+        override fun findElementByXpath(sXpath: String): Element {
+            val elements = findAllElementsByXpath(sXpath)
+            if (elements.isEmpty()) {
+                throw Exception("Xml elements by xPath: $sXpath not found.")
+            }
+            moreThenOneElementWarning(elements)
+            return elements[0]
+        }
+
+        override fun findElementByXpathIfExist(sXpath: String): Element? {
+            val elements = findAllElementsByXpath(sXpath)
+            return if (elements.isEmpty()) {
+                null
+            } else {
+                moreThenOneElementWarning(elements)
+                elements[0]
+            }
+        }
+
+        private fun moreThenOneElementWarning(elements: List<Element>) {
+            if (elements.size > 1) {
+                LOG.warn("Found more than one element. The first one will be returned.")
+            }
+        }
+
+        override fun hasElementByXpath(sXpath: String): Boolean {
+            val elements = findAllElementsByXpath(sXpath)
+            return elements.isNotEmpty()
+        }
+
+        override fun findAllElementsByXpath(sXpath: String): List<Element> {
+            val xPathFactory = XPathFactory.newInstance()
+            val xpath = xPathFactory.newXPath()
+            val xPathExpression = xpath.compile(sXpath)
+            val nodeList = xPathExpression.evaluate(this@ext, XPathConstants.NODESET) as NodeList
+
+            val filterElementList = ArrayList<Element>()
+            for (i in 0 until nodeList.length) {
+                val node = nodeList.item(i)
+                if (node !is Element) {
+                    LOG.info("Node with name \"${node.localName}\" isn't an Element.")
+                    continue
+                }
+                filterElementList.add(node)
+            }
+
+            if (filterElementList.size == 0) {
+                LOG.info("Xml elements by xPath: $sXpath not found.")
+            }
+            return filterElementList
+        }
+
+        override fun add(name: String, value: String?, namespace: String?): Element {
+            val element = if (namespace == null) {
+                this@ext.ownerDocument.createElement(name)
+            } else {
+                this@ext.ownerDocument.createElementNS(namespace, name)
+            }
+            if (value != null) {
+                element.textContent = value
+            }
+
+            return this@ext.appendChild(element) as Element
+        }
+
+        override fun addWithDisabledEscaping(name: String, escapedSymbol: String, value: String?, namespace: String?) {
+            val disableEscaping = this@ext.ownerDocument.createProcessingInstruction(
+                StreamResult.PI_DISABLE_OUTPUT_ESCAPING, escapedSymbol)
+            this@ext.appendChild(disableEscaping)
+            this.add(name, value, namespace)
+            val enableEscaping = this@ext.ownerDocument.createProcessingInstruction(
+                StreamResult.PI_ENABLE_OUTPUT_ESCAPING, escapedSymbol)
+            this@ext.appendChild(enableEscaping)
+        }
+
+        override fun addClone(element: Element): Element {
+            val clone = this@ext.ownerDocument.importNode(element, true) as Element
+            this@ext.appendChild(clone)
+            return clone
+        }
+
+        override fun findAllElementsByAttr(attrName: String): List<Element> {
+            return findAllElementsByXpath("*[@$attrName]")
+        }
+
+        override fun findAllElementsByName(name: String): List<Element> {
+            return findAllElementsByXpath(name)
+        }
+
+        override fun getAttr(attrName: String): Node? {
+            val attrs = this@ext.attributes
+            if (attrs == null || attrs.length == 0) {
+                LOG.warn("Element by name \"${this@ext.nodeName}\" hasn't attributes.")
+                return null
+            }
+            val attr = attrs.getNamedItem(attrName)
+            if (attr == null) {
+                LOG.warn("Attribute by name: \"$attrName\" not found in the node \"${this@ext.nodeName}\"")
+            }
+            return attr
+        }
+
+        override fun getAttrValue(attrName: String): String? {
+            val attr = getAttr(attrName)
+            return attr?.textContent?.trim()
+        }
+
+        override fun nodeBypass(consumer: (Element) -> Unit) {
+            val childElements: List<Element> = this@ext.childNodes.asList()
+            childElements.forEach { element ->
+                element.ext.nodeBypass(consumer)
+            }
+            consumer(this@ext)
+        }
+
+        override fun remove(): Boolean {
+            val parent = this@ext.parentNode as Element?
+            if (parent == null) {
+                LOG.warn("The node \"${this@ext.nodeName}\" wasn't removed. Its parent node is null.")
+                return false
+            }
+            parent.removeChild(this@ext)
+            LOG.info("The node \"${this@ext.nodeName}\" is removed.")
+            return true
         }
     }
-
-    if (targetElement == null) {
-        LOG.warn("Xml element by name: $name not found.")
-    }
-    return targetElement
-}
-
-/**
- * Find nested single-level element by its name without a given namespace
- *
- * @param name The name of element for search
- * @return The found element.
- * @throws NullPointerException if no element was found.
- */
-fun Element.findElementByName(name: String): Element {
-    return innerFindElementByName(name)!!
-}
-
-/**
- * Find nested single-level element by its name without a given namespace
- *
- * @param name - The name of element for search
- * @return The found element or null.
- */
-fun Element.findElementByNameIfExist(name: String): Element? {
-    return innerFindElementByName(name)
-}
-
-/**
- * Find nested single-level element by its name without a given namespace and set specified value.
- *
- * @param name The name of an element for which it is needed to set the value.
- * @param value Set value
- * @return The element with specified name
- * @throws NullPointerException if no element was found.
- * */
-fun Element.setValueToElement(name: String, value: String): Element {
-    return this.setValueToElementIfExist(name, value)!!
-}
-
-/**
- * Find nested single-level element by its name without a given namespace and set specified value.
- *
- * @param name The name of an element for which it is needed to set the value.
- * @param value Set value
- * @return The element with specified name or null
- * */
-fun Element.setValueToElementIfExist(name: String, value: String): Element? {
-    val childElement = this.findElementByNameIfExist(name)
-    childElement?.textContent = value
-    return childElement
-}
-
-/**
- * Represent the element as a string
- *
- * @return The element as a string
- */
-fun Element.asString(): String {
-    val stringWriter = StringWriter()
-    val transformer = TransformerExt.createXmlTransformer()
-    if (this is Document) {
-        transformer.addNoXmlDeclaration()
-    }
-    transformer.transform(DOMSource(this), StreamResult(stringWriter))
-    return stringWriter.toString()
-}
-
-// If a document is used, then property OMIT_XML_DECLARATION have to have value "no"
-private fun Transformer.addNoXmlDeclaration(): Transformer {
-    this.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no")
-    return this
-}
-
-/**
- * Check the document for schema compliance
- *
- * @param schema Schema for checking
- * @return Whether the document is valid or not.
- */
-fun Element.schemaValidation(schema: Schema): Boolean {
-
-    val validator = schema.newValidator()
-    try {
-        validator.validate(DOMSource(this))
-    } catch (e: Exception) {
-        LOG.error("Schema validation error: ${e.message}. Stacktrace:${e.stackTrace}")
-        return false
-    }
-    return true
-}
-
-/**
- * Find node by xPath
- *
- * @param sXpath XPath string to search for an element
- * @return The found element
- * @throws NullPointerException if no element was found.
- */
-fun Element.findElementByXpath(sXpath: String): Element {
-    val elements = this.findAllElementsByXpath(sXpath)
-    if (elements.isEmpty()) {
-        throw Exception("Xml elements by xPath: $sXpath not found.")
-    }
-    moreThenOneElementWarning(elements)
-    return elements[0]
-}
-
-/**
- * Find node by xPath
- *
- * @param sXpath XPath string to search for an element
- * @return The found element or null
- */
-fun Element.findElementByXpathIfExist(sXpath: String): Element? {
-    val elements = this.findAllElementsByXpath(sXpath)
-    return if (elements.isEmpty()) {
-        null
-    } else {
-        moreThenOneElementWarning(elements)
-        elements[0]
-    }
-}
-
-private fun moreThenOneElementWarning(elements: List<Element>) {
-    if (elements.size > 1) {
-        LOG.warn("Found more than one element. The first one will be returned.")
-    }
-}
-
-/**
- * Check an existence of an element by xPath
- *
- * @param sXpath XPath string to search for an element
- * @return Whether the element exists.
- */
-fun Element.hasElementByXpath(sXpath: String): Boolean {
-    val elements = this.findAllElementsByXpath(sXpath)
-    return elements.isNotEmpty()
-}
-
-/**
- * Find all nodes by xPath
- *
- * @param sXpath XPath string to search for elements
- * @return List of finding elements
- */
-fun Element.findAllElementsByXpath(sXpath: String): List<Element> {
-    val xPathFactory = XPathFactory.newInstance()
-    val xpath = xPathFactory.newXPath()
-    val xPathExpression = xpath.compile(sXpath)
-    val nodeList = xPathExpression.evaluate(this, XPathConstants.NODESET) as NodeList
-
-    val filterElementList = ArrayList<Element>()
-    for (i in 0 until nodeList.length) {
-        val node = nodeList.item(i)
-        if (node !is Element) {
-            LOG.info("Node with name \"${node.localName}\" isn't an Element.")
-            continue
-        }
-        filterElementList.add(node)
-    }
-
-    if (filterElementList.size == 0) {
-        LOG.info("Xml elements by xPath: $sXpath not found.")
-    }
-    return filterElementList
-}
-
-/**
- * Add new nested single-level node
- *
- * @param name The name of creating node
- * @param value The text value of creating node
- * @param namespace The namespace of creating node
- * @return Created node
- * */
-fun Element.add(name: String, value: String? = null, namespace: String? = null): Element {
-
-    val element = if (namespace == null) {
-        this.ownerDocument.createElement(name)
-    } else {
-        this.ownerDocument.createElementNS(namespace, name)
-    }
-    if (value != null) {
-        element.textContent = value
-    }
-
-    return this.appendChild(element) as Element
-}
-
-/**
- * Add a new single-level node with disabled escaping of the specified symbol.
- * For example symbol "&" in node value will be escaped by "&amp;" if escaping don't disable.
- *
- * @param name The name of creating node
- * @param escapedSymbol The symbol that needs to be escaped
- * @param value The text value of creating node
- * @param namespace The namespace of creating node
- * */
-fun Element.addWithDisabledEscaping(
-    name: String, escapedSymbol: String, value: String? = null, namespace: String? = null
-) {
-    val disableEscaping =
-        this.ownerDocument.createProcessingInstruction(StreamResult.PI_DISABLE_OUTPUT_ESCAPING, escapedSymbol)
-    this.appendChild(disableEscaping)
-    this.add(name, value, namespace)
-    val enableEscaping =
-        this.ownerDocument.createProcessingInstruction(StreamResult.PI_ENABLE_OUTPUT_ESCAPING, escapedSymbol)
-    this.appendChild(enableEscaping)
-}
-
-/**
- * Add a clone of given node
- *
- * @param element Appended node
- * @return The link to an appended node
- * */
-fun Element.addClone(element: Element): Element {
-    val clone = this.ownerDocument.importNode(element, true) as Element
-    this.appendChild(clone)
-    return clone
-}
-
-/**
- * Find all nested single-level element by attribute name
- *
- * @param attrName Attribute name for search
- * @return List of found elements
- */
-fun Element.findAllElementsByAttr(attrName: String): List<Element> {
-    return this.findAllElementsByXpath("*[@$attrName]")
-}
-
-/**
- * Find all nested single-level element by name
- *
- * @param name Element name for searching
- * @return List of found elements
- */
-fun Element.findAllElementsByName(name: String): List<Element> {
-    return this.findAllElementsByXpath(name)
-}
-
-/**
- * Getting an attribute by name
- * todo Not realized element interface. 
- *
- * @param attrName Attribute name
- * @return Found element
- */
-fun Element.getAttr(attrName: String): Node? {
-    val attrs = this.attributes
-    if (attrs == null || attrs.length == 0) {
-        LOG.warn("Element by name \"${this.nodeName}\" hasn't attributes.")
-        return null
-    }
-    val attr = attrs.getNamedItem(attrName)
-    if (attr == null) {
-        LOG.warn("Attribute by name: \"$attrName\" not found in the node \"${this.nodeName}\"")
-    }
-    return attr
-}
-
-/**
- * Getting value of an attribute by his name
- *
- * @param attrName Attribute name
- * @return Value of found attribute
- */
-fun Element.getAttrValue(attrName: String): String? {
-    val attr = this.getAttr(attrName)
-    return attr?.textContent?.trim()
-}
-
-/**
- * A recursive bypass of element tree with a custom function executing.
- *
- * @param consumer The custom function to execute on an every element in this element.
- */
-fun Element.nodeBypass(consumer: (Element) -> Unit) {
-    val childElements: List<Element> = this.childNodes.asList()
-    childElements.forEach { element ->
-        element.nodeBypass(consumer)
-    }
-    consumer(this)
-}
-
-/**
- * Remove the element from its parent element
- *
- * @return Whether the element was removed
- */
-fun Element.remove(): Boolean {
-    val parent = this.parentNode as Element?
-    if (parent == null) {
-        LOG.warn("The node \"${this.nodeName}\" wasn't removed. Its parent node is null.")
-        return false
-    }
-    parent.removeChild(this)
-    LOG.info("The node \"${this.nodeName}\" is removed.")
-    return true
-}
