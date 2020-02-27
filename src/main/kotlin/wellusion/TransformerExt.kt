@@ -1,5 +1,6 @@
 package wellusion
 
+import org.w3c.dom.Document
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import javax.xml.transform.OutputKeys
@@ -7,7 +8,10 @@ import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.stream.StreamSource
 
-class TransformerExt {
+abstract class TransformerExt {
+
+    abstract fun xsltTransform(document: Document): Document
+
     companion object {
 
         /**

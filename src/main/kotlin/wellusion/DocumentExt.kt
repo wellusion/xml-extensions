@@ -11,7 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
-class DocumentExt {
+abstract class DocumentExt {
     companion object {
 
         /**

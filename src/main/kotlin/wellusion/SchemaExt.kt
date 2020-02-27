@@ -1,5 +1,6 @@
 package wellusion
 
+import org.w3c.dom.Document
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import javax.xml.XMLConstants
@@ -7,7 +8,10 @@ import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.Schema
 import javax.xml.validation.SchemaFactory
 
-class SchemaExt {
+abstract class SchemaExt {
+
+    abstract fun validate(document: Document): Boolean
+
     companion object {
 
         /*

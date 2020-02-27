@@ -179,7 +179,7 @@ val Element.ext: ElementExt
         }
 
         override fun nodeBypass(consumer: (Element) -> Unit) {
-            val childElements: List<Element> = this@ext.childNodes.asList()
+            val childElements: List<Element> = this@ext.childNodes.ext.asList()
             childElements.forEach { element ->
                 element.ext.nodeBypass(consumer)
             }

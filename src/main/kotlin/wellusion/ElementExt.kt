@@ -166,10 +166,4 @@ abstract class ElementExt {
      * @return Whether the element was removed
      */
     abstract fun remove(): Boolean
-
-    companion object {
-        fun test1(): String {
-            return "test1"
-        }
-    }
 }

@@ -217,7 +217,7 @@ class ElementTest : BaseTest() {
         val document = DocumentExt.createDocument(testDocument)
         val dElement = document.documentElement!!
         dElement.ext.nodeBypass { element ->
-            if (element.childNodes.asList().isEmpty()) {
+            if (element.childNodes.ext.asList().isEmpty()) {
                 element.textContent = "replacedValue"
             }
         }

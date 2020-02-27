@@ -17,6 +17,6 @@ class NodeListTest : BaseTest() {
         val elementsCount =
             IntStream.range(0, nodeList!!.length).filter { nodeList.item(it) is Element }.count().toInt()
 
-        Assert.assertEquals(elementsCount, nodeList.asList().size)
+        Assert.assertEquals(elementsCount, nodeList.ext.asList().size)
     }
 }
