@@ -1,5 +1,6 @@
 package wellusion
 
+import org.w3c.dom.Attr
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import javax.xml.validation.Schema
@@ -13,7 +14,7 @@ abstract class ElementExt {
      * @return The found element.
      * @throws NullPointerException if no element was found.
      */
-    abstract fun findElementByName(name: String): Element
+    abstract fun getChildElement(name: String): Element
 
     /**
      * Find nested single-level element by its name without a given namespace
@@ -21,41 +22,35 @@ abstract class ElementExt {
      * @param name - The name of element for search
      * @return The found element or null.
      */
-    abstract fun findElementByNameIfExist(name: String): Element?
+    abstract fun getChildElementIfExist(name: String): Element?
 
     /**
-     * Find nested single-level element by its name without a given namespace and set specified value.
+     * Find all nested single-level elements by name
      *
-     * @param name The name of an element for which it is needed to set the value.
-     * @param value Set value
-     * @return The element with specified name
-     * @throws NullPointerException if no element was found.
-     * */
-    abstract fun setValueToElement(name: String, value: String): Element
-
-    /**
-     * Find nested single-level element by its name without a given namespace and set specified value.
-     *
-     * @param name The name of an element for which it is needed to set the value.
-     * @param value Set value
-     * @return The element with specified name or null
-     * */
-    abstract fun setValueToElementIfExist(name: String, value: String): Element?
-
-    /**
-     * Represent the element as a string
-     *
-     * @return The element as a string
+     * @param name Element name for searching
+     * @return List of found elements
      */
-    abstract fun asString(): String
+    abstract fun getAllChildElements(name: String): List<Element>
 
     /**
-     * Check the document for schema compliance
+     * Set the specified value for the element.
      *
-     * @param schema Schema for checking
-     * @return Whether the document is valid or not.
+     * @param value Set value
+     * */
+    abstract fun setValue(value: String)
+
+    /**
+     * Get the text value of the element if the value exists. If the element has nested elements, a null value is returned.
+     *
      */
-    abstract fun schemaValidation(schema: Schema): Boolean
+    abstract fun getValue(): String?
+
+    /**
+     * Check the element for having nested elements
+     *
+     * @return Whether the element has nested elements
+     */
+    abstract fun hasChildElements(): Boolean
 
     /**
      * Find node by xPath
@@ -64,7 +59,7 @@ abstract class ElementExt {
      * @return The found element
      * @throws NullPointerException if no element was found.
      */
-    abstract fun findElementByXpath(sXpath: String): Element
+    abstract fun getElementByXpath(sXpath: String): Element
 
     /**
      * Find node by xPath
@@ -72,15 +67,7 @@ abstract class ElementExt {
      * @param sXpath XPath string to search for an element
      * @return The found element or null
      */
-    abstract fun findElementByXpathIfExist(sXpath: String): Element?
-
-    /**
-     * Check an existence of an element by xPath
-     *
-     * @param sXpath XPath string to search for an element
-     * @return Whether the element exists.
-     */
-    abstract fun hasElementByXpath(sXpath: String): Boolean
+    abstract fun getElementByXpathIfExist(sXpath: String): Element?
 
     /**
      * Find all nodes by xPath
@@ -88,7 +75,15 @@ abstract class ElementExt {
      * @param sXpath XPath string to search for elements
      * @return List of finding elements
      */
-    abstract fun findAllElementsByXpath(sXpath: String): List<Element>
+    abstract fun getAllElementsByXpath(sXpath: String): List<Element>
+
+    /**
+     * Check an existence of an element by xPath
+     *
+     * @param sXpath XPath string to search for an element
+     * @return Whether the element exists.
+     */
+    abstract fun hasElementsByXpath(sXpath: String): Boolean
 
     /**
      * Add new nested single-level node
@@ -98,7 +93,7 @@ abstract class ElementExt {
      * @param namespace The namespace of creating node
      * @return Created node
      * */
-    abstract fun add(name: String, value: String? = null, namespace: String? = null): Element
+    abstract fun addChildElement(name: String, value: String? = null, namespace: String? = null): Element
 
     /**
      * Add a new single-level node with disabled escaping of the specified symbol.
@@ -109,8 +104,10 @@ abstract class ElementExt {
      * @param value The text value of creating node
      * @param namespace The namespace of creating node
      * */
-    abstract fun addWithDisabledEscaping(name: String, escapedSymbol: String, value: String? = null,
-                                         namespace: String? = null)
+    abstract fun addChildElementWithDisabledEscaping(
+        name: String, escapedSymbol: String, value: String? = null,
+        namespace: String? = null
+    )
 
     /**
      * Add a clone of given node
@@ -118,32 +115,51 @@ abstract class ElementExt {
      * @param element Appended node
      * @return The link to an appended node
      * */
-    abstract fun addClone(element: Element): Element
+    abstract fun addCloneChildElement(element: Element): Element
 
     /**
-     * Find all nested single-level element by attribute name
+     * Find nested single-level element with the attribute value
+     *
+     * @param name Name of the attribute
+     * @param value Value of the attribute
+     * @return Found element
+     * @throws NullPointerException if no element was found.
+     */
+    abstract fun getChildElementByAttr(name: String, value: String): Element
+
+    /**
+     * Find nested single-level element with the attribute value
+     *
+     * @param name Name of the attribute
+     * @param value Value of the attribute
+     * @return Found element
+     */
+    abstract fun getChildElementByAttrIfExist(name: String, value: String): Element?
+
+    /**
+     * Find all nested single-level elements with the attribute value
+     *
+     * @param name Name of the attribute
+     * @param value Value of the attribute
+     * @return List of found elements
+     */
+    abstract fun getAllChildElementsByAttr(name: String, value: String): List<Element>
+
+    /**
+     * Find all nested single-level element with the specified attribute name
      *
      * @param attrName Attribute name for search
      * @return List of found elements
      */
-    abstract fun findAllElementsByAttr(attrName: String): List<Element>
+    abstract fun getAllElementsByExistAttr(attrName: String): List<Element>
 
     /**
-     * Find all nested single-level element by name
-     *
-     * @param name Element name for searching
-     * @return List of found elements
-     */
-    abstract fun findAllElementsByName(name: String): List<Element>
-
-    /**
-     * Getting an attribute by name
-     * todo Not realized element interface.
+     * Getting an attribute by his name
      *
      * @param attrName Attribute name
      * @return Found element
      */
-    abstract fun getAttr(attrName: String): Node?
+    abstract fun getAttr(attrName: String): Attr?
 
     /**
      * Getting value of an attribute by his name
@@ -154,16 +170,31 @@ abstract class ElementExt {
     abstract fun getAttrValue(attrName: String): String?
 
     /**
+     * Represent the element as a string
+     *
+     * @return The element as a string
+     */
+    abstract override fun toString(): String
+
+    /**
+     * Check the document for schema compliance
+     *
+     * @param schema Schema for checking
+     * @return Whether the document is valid or not.
+     */
+    abstract fun schemaValidation(schema: Schema): Boolean
+
+    /**
      * A recursive bypass of element tree with a custom function executing.
      *
      * @param consumer The custom function to execute on an every element in this element.
      */
-    abstract fun nodeBypass(consumer: (Element) -> Unit)
+    abstract fun elementBypass(consumer: (Element) -> Unit)
 
     /**
-     * Remove the element from its parent element
+     * Remove nested element by his name.
      *
      * @return Whether the element was removed
      */
-    abstract fun remove(): Boolean
+    abstract fun removeChildElement(elementName: String): Boolean
 }

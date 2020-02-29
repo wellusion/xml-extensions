@@ -10,6 +10,12 @@ import javax.xml.transform.stream.StreamSource
 
 abstract class TransformerExt {
 
+    /**
+     * Transform a document using a xslt template
+     *
+     * @param document A document for transformation
+     * @return A document after transformation
+     * */
     abstract fun xsltTransform(document: Document): Document
 
     companion object {

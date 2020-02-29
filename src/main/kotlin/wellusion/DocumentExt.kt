@@ -21,7 +21,7 @@ abstract class DocumentExt {
          * @return Created document
          */
         fun createDocument(sDocument: String): Document {
-            val documentBuilder = getDocumentBuilder()
+            val documentBuilder = createDocumentBuilder()
             StringReader(sDocument).use { stringReader ->
                 return documentBuilder.parse(
                     InputSource(stringReader)
@@ -35,7 +35,7 @@ abstract class DocumentExt {
          * @param streamDocument Document as input stream
          */
         fun createDocument(streamDocument: InputStream): Document {
-            val documentBuilder = getDocumentBuilder()
+            val documentBuilder = createDocumentBuilder()
             return documentBuilder.parse(streamDocument)
         }
 
@@ -44,7 +44,7 @@ abstract class DocumentExt {
          *
          * @return Created document builder
          */
-        fun getDocumentBuilder(): DocumentBuilder {
+        fun createDocumentBuilder(): DocumentBuilder {
             val documentBuilderFactory = DocumentBuilderFactory.newInstance()
             documentBuilderFactory.isNamespaceAware = true
             return documentBuilderFactory.newDocumentBuilder()
@@ -57,7 +57,6 @@ abstract class DocumentExt {
          * @param document The document for writing.
          */
         fun writeDocumentToFile(file: File, document: Document) {
-
             FileWriter(file).use { writer ->
                 val result = StreamResult(writer)
                 val source = DOMSource(document)

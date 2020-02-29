@@ -9,12 +9,6 @@ val Schema.ext: SchemaExt
     get() = object : SchemaExt() {
         private val LOG = LoggerFactory.getLogger(Schema::class.java)
 
-        /**
-         * Check the document for schema compliance
-         *
-         * @param document The document for checking
-         * @return Whether the document is valid or not
-         */
         override fun validate(document: Document): Boolean {
             val validator = this@ext.newValidator()
             try {
@@ -24,6 +18,10 @@ val Schema.ext: SchemaExt
                 return false
             }
             return true
+        }
+
+        override fun validateStrict(document: Document) {
+            TODO()
         }
     }
 

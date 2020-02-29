@@ -10,7 +10,21 @@ import javax.xml.validation.SchemaFactory
 
 abstract class SchemaExt {
 
+    /**
+     * Check the document for schema compliance
+     *
+     * @param document The document for checking
+     * @return Whether the document is valid or not
+     */
     abstract fun validate(document: Document): Boolean
+
+    /**
+     * Check the document for schema compliance
+     *
+     * @param document The document for checking
+     * @exception TODO
+     */
+    abstract fun validateStrict(document: Document)
 
     companion object {
 
@@ -24,9 +38,7 @@ abstract class SchemaExt {
         fun createSchema(vararg sSchemes: String): Schema {
             val factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
             val streamSources = sSchemes.map { sScheme ->
-                StreamSource(
-                    ByteArrayInputStream(sScheme.toByteArray(StandardCharsets.UTF_8))
-                )
+                StreamSource(ByteArrayInputStream(sScheme.toByteArray(StandardCharsets.UTF_8)))
             }.toTypedArray()
             return factory.newSchema(streamSources)
         }

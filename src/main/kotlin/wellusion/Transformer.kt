@@ -8,19 +8,11 @@ import javax.xml.transform.Transformer
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
-
 val Transformer.ext: TransformerExt
     get() = object : TransformerExt() {
 
-        /**
-         * Transform a document using a xslt template
-         *
-         * @param document A document for transformation
-         * @return A document after transformation
-         * */
         override fun xsltTransform(document: Document): Document {
-
-            val documentBuilder = DocumentExt.getDocumentBuilder()
+            val documentBuilder = DocumentExt.createDocumentBuilder()
             ByteArrayOutputStream().use { outputStream ->
                 val xmlSource = DOMSource(document)
                 val outputTarget = StreamResult(outputStream)
@@ -30,5 +22,4 @@ val Transformer.ext: TransformerExt
                 }
             }
         }
-
     }

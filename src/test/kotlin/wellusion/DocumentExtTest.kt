@@ -22,7 +22,7 @@ class DocumentExtTest : BaseTest() {
 
     @Test
     fun getDocumentBuilder() {
-        DocumentExt.getDocumentBuilder()
+        DocumentExt.createDocumentBuilder()
     }
 
     @Test
@@ -34,8 +34,8 @@ class DocumentExtTest : BaseTest() {
             DocumentExt.writeDocumentToFile(file, document)
 
             val targetFile = File(file.path)
-            val targetDocument = DocumentExt.getDocumentBuilder().parse(targetFile)
-            val child4 = targetDocument.documentElement.ext.findElementByName("child4")
+            val targetDocument = DocumentExt.createDocumentBuilder().parse(targetFile)
+            val child4 = targetDocument.documentElement.ext.getChildElement("child4")
             assertEquals("child4-value", child4.textContent)
         } finally {
             file?.delete()
