@@ -23,9 +23,7 @@ abstract class DocumentExt {
         fun createDocument(sDocument: String): Document {
             val documentBuilder = createDocumentBuilder()
             StringReader(sDocument).use { stringReader ->
-                return documentBuilder.parse(
-                    InputSource(stringReader)
-                )
+                return documentBuilder.parse(InputSource(stringReader))
             }
         }
 

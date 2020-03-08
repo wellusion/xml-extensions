@@ -33,6 +33,13 @@ abstract class ElementExt {
     abstract fun getAllChildElements(name: String): List<Element>
 
     /**
+     * Find all nested single-level elements
+     *
+     * @return List of found elements
+     */
+    abstract fun getAllChildElements(): List<Element>
+
+    /**
      * Set the specified value for the element.
      *
      * @param value Set value
@@ -151,7 +158,7 @@ abstract class ElementExt {
      * @param attrName Attribute name for search
      * @return List of found elements
      */
-    abstract fun getAllElementsByExistAttr(attrName: String): List<Element>
+    abstract fun getAllChildElementsByExistAttr(attrName: String): List<Element>
 
     /**
      * Getting an attribute by his name
@@ -182,7 +189,7 @@ abstract class ElementExt {
      * @param schema Schema for checking
      * @return Whether the document is valid or not.
      */
-    abstract fun schemaValidation(schema: Schema): Boolean
+    abstract fun schemaValidation(schema: Schema, threwException: Boolean = false): Boolean
 
     /**
      * A recursive bypass of element tree with a custom function executing.

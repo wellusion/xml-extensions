@@ -10,7 +10,7 @@ val Schema.ext: SchemaExt
         private val LOG = LoggerFactory.getLogger(Schema::class.java)
 
         override fun validate(document: Document): Boolean {
-            val validator = this@ext.newValidator()
+            val validator = newValidator()
             try {
                 validator.validate(DOMSource(document))
             } catch (e: Exception) {
@@ -21,8 +21,6 @@ val Schema.ext: SchemaExt
         }
 
         override fun validateStrict(document: Document) {
-            TODO()
+            newValidator().validate(DOMSource(document))
         }
     }
-
-

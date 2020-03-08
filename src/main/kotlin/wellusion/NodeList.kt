@@ -9,11 +9,10 @@ val NodeList.ext: NodeListExt
 get() = object : NodeListExt() {
 
     override fun toElementList(): List<Element> {
-        return IntStream.range(0, this@ext.length)
-            .filter { index -> this@ext.item(index) is Element }
-            .mapToObj { index -> this@ext.item(index) as Element }
+        return IntStream.range(0, length)
+            .filter { index -> item(index) is Element }
+            .mapToObj { index -> item(index) as Element }
             .collect(Collectors.toList())
     }
-
 }
 

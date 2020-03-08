@@ -16,7 +16,7 @@ val Transformer.ext: TransformerExt
             ByteArrayOutputStream().use { outputStream ->
                 val xmlSource = DOMSource(document)
                 val outputTarget = StreamResult(outputStream)
-                this@ext.transform(xmlSource, outputTarget)
+                transform(xmlSource, outputTarget)
                 ByteArrayInputStream(outputStream.toByteArray()).use { inputStream ->
                     return documentBuilder.parse(InputSource(inputStream))
                 }
