@@ -16,15 +16,14 @@ abstract class SchemaExt {
      * @param document The document for checking
      * @return Whether the document is valid or not
      */
-    abstract fun validate(document: Document): Boolean
+    abstract fun isValid(document: Document): Boolean
 
     /**
      * Check the document for schema compliance
      *
      * @param document The document for checking
-     * @exception TODO
      */
-    abstract fun validateStrict(document: Document)
+    abstract fun validate(document: Document)
 
     companion object {
 

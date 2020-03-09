@@ -11,8 +11,8 @@ class SchemaTest : BaseTest()  {
         val schema = SchemaExt.createSchema(testSchemaNoNs)
         val wrongSchema = SchemaExt.createSchema(testSchemaSub2, testSchemaSub1, testSchema)
 
-        Assert.assertTrue(schema.ext.validate(document))
-        Assert.assertFalse(wrongSchema.ext.validate(document))
+        Assert.assertTrue(schema.ext.isValid(document))
+        Assert.assertFalse(wrongSchema.ext.isValid(document))
     }
 
     @Test
@@ -21,9 +21,9 @@ class SchemaTest : BaseTest()  {
         val schema = SchemaExt.createSchema(testSchemaNoNs)
         val wrongSchema = SchemaExt.createSchema(testSchemaSub2, testSchemaSub1, testSchema)
 
-        schema.ext.validateStrict(document)
+        schema.ext.validate(document)
         Assert.assertThrows(Exception::class.java) {
-            wrongSchema.ext.validateStrict(document)
+            wrongSchema.ext.validate(document)
         }
     }
 }

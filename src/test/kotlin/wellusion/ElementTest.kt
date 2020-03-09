@@ -115,7 +115,7 @@ class ElementTest : BaseTest() {
     }
 
     @Test
-    fun hasElementByXpath() {
+    fun hasElementsByXpath() {
         val document = DocumentExt.createDocument(testDocument)
         Assert.assertTrue(document.documentElement.ext.hasElementsByXpath("/testXmlDocument/*[local-name()='child7']"))
         Assert.assertFalse(document.documentElement.ext.hasElementsByXpath("/testXmlDocument1"))

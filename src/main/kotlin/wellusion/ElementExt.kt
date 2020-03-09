@@ -60,7 +60,7 @@ abstract class ElementExt {
     abstract fun hasChildElements(): Boolean
 
     /**
-     * Find node by xPath
+     * Find element by xPath
      *
      * @param sXpath XPath string to search for an element
      * @return The found element
@@ -69,7 +69,7 @@ abstract class ElementExt {
     abstract fun getElementByXpath(sXpath: String): Element
 
     /**
-     * Find node by xPath
+     * Find element by xPath
      *
      * @param sXpath XPath string to search for an element
      * @return The found element or null
@@ -77,7 +77,7 @@ abstract class ElementExt {
     abstract fun getElementByXpathIfExist(sXpath: String): Element?
 
     /**
-     * Find all nodes by xPath
+     * Find all elements by xPath
      *
      * @param sXpath XPath string to search for elements
      * @return List of finding elements
@@ -93,34 +93,33 @@ abstract class ElementExt {
     abstract fun hasElementsByXpath(sXpath: String): Boolean
 
     /**
-     * Add new nested single-level node
+     * Add new nested single-level element
      *
-     * @param name The name of creating node
-     * @param value The text value of creating node
-     * @param namespace The namespace of creating node
-     * @return Created node
+     * @param name The name of creating element
+     * @param value The text value of creating element
+     * @param namespace The namespace of creating element
+     * @return Created element
      * */
     abstract fun addChildElement(name: String, value: String? = null, namespace: String? = null): Element
 
     /**
-     * Add a new single-level node with disabled escaping of the specified symbol.
-     * For example symbol "&" in node value will be escaped by "&amp;" if escaping don't disable.
+     * Add a new single-level element with disabled escaping of the specified symbol.
+     * For example symbol "&" in element value will be escaped by "&amp;" if escaping don't disable.
      *
-     * @param name The name of creating node
+     * @param name The name of creating element
      * @param escapedSymbol The symbol that needs to be escaped
-     * @param value The text value of creating node
-     * @param namespace The namespace of creating node
+     * @param value The text value of creating element
+     * @param namespace The namespace of creating element
      * */
     abstract fun addChildElementWithDisabledEscaping(
-        name: String, escapedSymbol: String, value: String? = null,
-        namespace: String? = null
+        name: String, escapedSymbol: String, value: String? = null, namespace: String? = null
     )
 
     /**
-     * Add a clone of given node
+     * Add a clone of given element
      *
-     * @param element Appended node
-     * @return The link to an appended node
+     * @param element Appended element
+     * @return The link to an appended element
      * */
     abstract fun addCloneChildElement(element: Element): Element
 
