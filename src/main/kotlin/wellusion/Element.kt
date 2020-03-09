@@ -61,7 +61,7 @@ val Element.ext: ElementExt
         }
 
         override fun hasChildElements(): Boolean {
-            return !childNodes.ext.toElementList().isEmpty()
+            return childNodes.ext.toElementList().isNotEmpty()
         }
 
         override fun getElementByXpath(sXpath: String): Element {
@@ -79,10 +79,9 @@ val Element.ext: ElementExt
                 elements[0]
             }
         }
-        
+
         override fun getAllElementsByXpath(sXpath: String): List<Element> {
-            val xPathFactory = XPathFactory.newInstance()
-            val xpath = xPathFactory.newXPath()
+            val xpath = XPath.xPathFactory.newXPath()
             val xPathExpression = xpath.compile(sXpath)
             val nodeList = xPathExpression.evaluate(this@ext, XPathConstants.NODESET) as NodeList
 
@@ -219,3 +218,7 @@ val Element.ext: ElementExt
             return true
         }
     }
+
+private object XPath {
+    val xPathFactory: XPathFactory = XPathFactory.newInstance()
+}
