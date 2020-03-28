@@ -12,7 +12,7 @@ class ElementTest : BaseTest() {
         assert(element.textContent == "child4-value")
 
         Assert.assertThrows(KotlinNullPointerException::class.java) {
-            document.documentElement.ext.getChildElement("notExistingChild")
+                document.documentElement.ext.getChildElement("notExistingChild")
         }
 
         element = document.documentElement.ext.getChildElement("child7")
