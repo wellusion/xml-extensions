@@ -1,5 +1,5 @@
-# XML-extensions
-Xml-extension is a slight library that contains a set of extensions for working with `org.w3c.dom` package. This library is kind of facade behind which hides the implementation of the most common cases of working with xml objects, such as searching child elements, getting node values, adding elements, creating documents and so on.
+# xml-extensions
+Xml-extensions is a slight library that contains a set of extensions for working with `org.w3c.dom` package. This library is kind of facade behind which hides the implementation of the most common cases of working with xml objects, such as searching child elements, getting node values, adding elements, creating documents and so on.
 <br />Access to the extensions are performed via the extension property `ext`, for example:
 ```kotlin
 element.ext.getChildElement("someChildName")
