@@ -9,43 +9,57 @@ The library contains extensions for the `Element`, `Document`, `NodeList`, `Sche
 DocumentExt.writeDocumentToFile(file, document)
 ```
 
-##Setup
-_
+##Usage
+###Gradle
+Add `mavenCentral()` to your list of repositories:
+```groovy
+repositories {
+    mavenCentral()
+}
+```
+
+Add this library to your list of dependencies:
+```groovy
+dependencies {
+    compile 'com.github.wellusion:xml-extensions:1.0'
+}
+```
 
 ##Examples
-Create a document from a string:
+Create a `Document` from a `String`:
 ```kotlin                   
 val documentAsString = "<?xml version="1.0" encoding="UTF-8"?><document></docuemnt>"
 val document = DocumentExt.createDocument(documentAsString)
 ```
-Find nested single-level element by its name without a given namespace:
+Find nested single-level `Element` by its name without a given namespace:
 ```kotlin 
 val document = DocumentExt.createDocument(documentAsString)
 document.documentElement.ext.getChildElement("childElement")
 ```
-Get the text value of the element if the value exists. If the element has nested elements, a null value is returned:
+Get the text value of the `Element` if the value exists. If the `Element` has nested elements, a `null` value is returned:
 ```kotlin 
 val childElement = document.documentElement.ext.getChildElement("childElement")
 childElement.ext.getValue()
 ```
-Check the element for having nested elements:
+Check the `Element` for having nested elements:
 ```kotlin                                                                      
 val childElement = document.documentElement.ext.getChildElement("childElement")
 childElement.ext.hasChildElements()
 ```
-Provide a NodeList as a List of elements:
+Provide a `NodeList` as a `List` of elements:
 ``` kotlin   
 val element = document.documentElement.ext.getChildElement("element")
 element.childNodes.ext.toElementList()
 ```
-Check the document for schema compliance:
+Check the `Document` for `Schema` compliance:
 ```kotlin                                                  
 val document = DocumentExt.createDocument(documentAsString)
 val schema = SchemaExt.createSchema(schemaAsString)
 schema.ext.isValid(document)
 ```
-Create a transformer instance for xslt transformations from string:
+Create a `Transformer` instance for xslt transformations from `String`:
 ```kotlin 
 val transformer = TransformerExt.createXsltTransformer(someXsltTemplate)
-```
-More working examples of using all extensions can be found in the project's test directory.
+```                                                           
+
+**More working examples of using all extensions can be found in the project's test directory.**
