@@ -1,9 +1,11 @@
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    java.withSourcesJar()
+task sourcesJar1(type: Jar) {
+    classifier "sources"
+    baseName = 'sources'
+    version = project.version
+    from sourceSets.main.allJava
 }
 
 task javadocJar(type: Jar) {
@@ -28,7 +30,7 @@ publishing {
 
         release(MavenPublication) {
             artifact("$buildDir/libs/${project.getName()}-${version}.jar")
-            artifact sourcesJar
+            artifact sourcesJar1
             artifact javadocJar
 
             pom {
