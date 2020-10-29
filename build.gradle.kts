@@ -1,19 +1,24 @@
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.konan.properties.loadProperties
 
-gradle.apply(from = "publish-maven.gradle.kts")
+// gradle.apply(from = "publish-maven.gradle.kts")
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.61"
     java
+
+    // publish-maven
+    id("maven-publish")
+    id("signing")
 }
 
 group = "com.github.wellusion"
-version = "1.01-SNAPSHOT"
+version = "1.001-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven { url =  uri("https://plugins.gradle.org/m2/") }
+    maven { url = uri("https://plugins.gradle.org/m2/") }
 }
 
 var slf4jVer = "1.7.30"
@@ -33,3 +38,90 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+
+// publish-maven
+val sourcesJar by tasks.registering(Jar::class) {
+    classifier = "sources"
+    from(sourceSets.main.get().allSource)
+}
+
+// val javadocJar by tasks.registering(Jar::class) {
+//     dependsOn(tasks.withType<DokkaTask>())
+//     classifier = "javadoc"
+//     from("$buildDir/docs/kdoc")
+// }
+val javadocJar by tasks.registering(Jar::class) {
+    classifier = "javadoc"
+    from(sourceSets.main.get().allSource)
+}
+
+val ossrhProperties = loadProperties(rootProject.file("ossrh/ossrh.properties").absolutePath)
+ext["signing.keyId"] = ossrhProperties["signing.keyId"]
+ext["signing.password"] = ossrhProperties["signing.password"]
+ext["signing.secretKeyRingFile"] = ossrhProperties["signing.secretKeyRingFile"]
+ext["ossrhUsername"] = ossrhProperties["ossrhUsername"]
+ext["ossrhPassword"] = ossrhProperties["ossrhPassword"]
+val ossrhUsername = ossrhProperties["ossrhUsername"] as String
+val ossrhPassword = ossrhProperties["ossrhPassword"] as String
+
+publishing {
+    publications.register<MavenPublication>("DetektPublication") {
+        artifact("$buildDir/libs/${project.name}-${version}.jar")
+        artifact(sourcesJar)
+        artifact(javadocJar)
+
+        pom {
+            name.set("xml-extensions")
+            description.set("A set of extensions for working with `org.w3c.dom` package.")
+            url.set("https://github.com/wellusion/xml-extensions")
+            licenses {
+                license {
+                    name.set("MIT License")
+                    url.set("https://opensource.org/licenses/MIT")
+                    distribution.set("repo")
+                }
+            }
+            developers {
+                developer {
+                    id.set("wellusion")
+                    name.set("wellusion")
+                    email.set("wellusion@gmail.com")
+                }
+            }
+            scm {
+                connection.set("scm:git:github.com/wellusion/xml-extensions.git")
+                developerConnection.set("scm:git:ssh://github.com/wellusion/xml-extensions.git")
+                url.set("https://github.com/wellusion/xml-extensions/tree/master")
+            }
+
+            withXml {
+                val dependenciesNode = asNode().appendNode("dependencies")
+                configurations.implementation.get().allDependencies.forEach {
+                    val dependencyNode = dependenciesNode.appendNode("dependency")
+                    dependencyNode.appendNode("groupId", it.group)
+                    dependencyNode.appendNode("artifactId", it.name)
+                    dependencyNode.appendNode("version", it.version)
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "sonatype"
+
+            val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications)
+}
