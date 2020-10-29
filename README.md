@@ -22,7 +22,7 @@ repositories {
 Add this library to your list of dependencies:
 ```groovy
 dependencies {
-    compile 'com.github.wellusion:xml-extensions:1.0'
+    compile 'com.github.wellusion:xml-extensions:1.01'
 }
 ```
 
