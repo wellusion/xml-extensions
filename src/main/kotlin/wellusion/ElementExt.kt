@@ -24,7 +24,7 @@ abstract class ElementExt {
     abstract fun getChildElementIfExist(name: String): Element?
 
     /**
-     * Find all nested single-level elements by name
+     * Find all nested single-level elements by name without a given namespace
      *
      * @param name Element name for searching
      * @return List of found elements
@@ -32,7 +32,7 @@ abstract class ElementExt {
     abstract fun getAllChildElements(name: String): List<Element>
 
     /**
-     * Find all nested single-level elements
+     * Find all nested single-level elements without a given namespace
      *
      * @return List of found elements
      */
@@ -123,7 +123,7 @@ abstract class ElementExt {
     abstract fun addCloneChildElement(element: Element): Element
 
     /**
-     * Find nested single-level element with the attribute value
+     * Find nested single-level element with the attribute value without a given namespace
      *
      * @param name Name of the attribute
      * @param value Value of the attribute
@@ -133,7 +133,7 @@ abstract class ElementExt {
     abstract fun getChildElementByAttr(name: String, value: String): Element
 
     /**
-     * Find nested single-level element with the attribute value
+     * Find nested single-level element with the attribute value without a given namespace
      *
      * @param name Name of the attribute
      * @param value Value of the attribute
@@ -142,7 +142,7 @@ abstract class ElementExt {
     abstract fun getChildElementByAttrIfExist(name: String, value: String): Element?
 
     /**
-     * Find all nested single-level elements with the attribute value
+     * Find all nested single-level elements with the attribute value without a given namespace
      *
      * @param name Name of the attribute
      * @param value Value of the attribute
@@ -151,7 +151,7 @@ abstract class ElementExt {
     abstract fun getAllChildElementsByAttr(name: String, value: String): List<Element>
 
     /**
-     * Find all nested single-level element with the specified attribute name
+     * Find all nested single-level element with the specified attribute name without a given namespace
      *
      * @param attrName Attribute name for search
      * @return List of found elements

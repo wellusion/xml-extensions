@@ -44,6 +44,12 @@ class ElementTest : BaseTest() {
     }
 
     @Test
+    fun getAllChildElementsByNameNs() {
+        val document = DocumentExt.createDocument(testDocument)
+        Assert.assertEquals(1, document.documentElement.ext.getAllChildElements("child7").size)
+    }
+
+    @Test
     fun getAllChildElements() {
         val document = DocumentExt.createDocument(testDocument)
         Assert.assertEquals(8, document.documentElement.ext.getAllChildElements().size)
@@ -181,6 +187,13 @@ class ElementTest : BaseTest() {
         Assert.assertThrows(Exception::class.java) {
             document.documentElement.ext.getChildElementByAttr("child2-attr1", "notExistValue")
         }
+    }
+
+    @Test
+    fun getChildElementNs() {
+        val document = DocumentExt.createDocument(testDocument)
+        val child8 = document.documentElement.ext.getChildElementByAttr("child8-attr3", "child8-attr3-value")
+        Assert.assertEquals(child8.ext.getAttrValue("child8-attr3"), "child8-attr3-value")
     }
 
     @Test

@@ -35,7 +35,7 @@ val Element.ext: ElementExt
         }
 
         override fun getAllChildElements(name: String): List<Element> {
-            return getAllElementsByXpath(name)
+            return getAllElementsByXpath("*[local-name()='$name']")
         }
 
         override fun getAllChildElements(): List<Element> {
@@ -152,7 +152,7 @@ val Element.ext: ElementExt
                 return emptyList()
             }
             return childNodes.ext.toElementList().filter { element ->
-                element.getAttribute(name)?.equals(value) ?: false
+                element.ext.getAttrValue(name)?.equals(value) ?: false
             }
         }
 
@@ -168,7 +168,7 @@ val Element.ext: ElementExt
             }
 
             var attr: Attr? = null
-            for (i in 0..attrs.length) {
+            for (i in 0 until attrs.length) {
                 if (attrs.item(i).localName == attrName) {
                     attr = attrs.item(i) as? Attr
                     break
