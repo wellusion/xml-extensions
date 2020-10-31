@@ -166,7 +166,14 @@ val Element.ext: ElementExt
                 LOG.warn("Element by name \"${nodeName}\" hasn't attributes.")
                 return null
             }
-            val attr = attrs.getNamedItem(attrName) as? Attr
+
+            var attr: Attr? = null
+            for (i in 0..attrs.length) {
+                if (attrs.item(i).localName == attrName) {
+                    attr = attrs.item(i) as? Attr
+                    break
+                }
+            }
             if (attr == null) {
                 LOG.warn("Attribute by name: \"$attrName\" not found in the element \"${nodeName}\"")
             }

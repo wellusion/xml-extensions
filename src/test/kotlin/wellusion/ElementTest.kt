@@ -229,6 +229,13 @@ class ElementTest : BaseTest() {
     }
 
     @Test
+    fun getAttrValueNs() {
+        val document = DocumentExt.createDocument(testDocument)
+        val child8 = document.documentElement.ext.getChildElement("child8")
+        Assert.assertEquals("child8-attr3-value", child8.ext.getAttrValue("child8-attr3"))
+    }
+
+    @Test
     fun toStringTest() {
         val document = DocumentExt.createDocument(testDocument)
         val sDocument = document.documentElement.ext.toString()

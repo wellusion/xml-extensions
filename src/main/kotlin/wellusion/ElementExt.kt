@@ -159,7 +159,7 @@ abstract class ElementExt {
     abstract fun getAllChildElementsByExistAttr(attrName: String): List<Element>
 
     /**
-     * Getting an attribute by his name
+     * Getting an attribute by his name without a given namespace
      *
      * @param attrName Attribute name
      * @return Found element
@@ -167,7 +167,7 @@ abstract class ElementExt {
     abstract fun getAttr(attrName: String): Attr?
 
     /**
-     * Getting value of an attribute by his name
+     * Getting value of an attribute by his name without a given namespace
      *
      * @param attrName Attribute name
      * @return Value of found attribute

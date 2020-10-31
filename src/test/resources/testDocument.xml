@@ -15,7 +15,7 @@
     </child6>
 
     <ns1:child7>child7-value</ns1:child7>
-    <ns1:child8 child8-attr1="child8-attr1-value" child8-attr2="child8-attr2-value">
+    <ns1:child8 child8-attr1="child8-attr1-value" child8-attr2="child8-attr2-value" ns2:child8-attr3="child8-attr3-value">
         <ns2:child8-1/>
     </ns1:child8>
 </testXmlDocument>

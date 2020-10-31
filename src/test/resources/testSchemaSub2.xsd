@@ -2,4 +2,5 @@
 <xs:schema elementFormDefault="qualified" targetNamespace="http://someaddress2"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="child8-1"/>
+    <xs:attribute name="child8-attr3" type="xs:string"/>
 </xs:schema>
