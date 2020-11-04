@@ -8,14 +8,7 @@ import java.io.StringReader
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
-abstract class DocumentExt {
-
-    /**
-     * Write the document to the file. Note: The specified file has to exist.
-     *
-     * @param file The file to write the document to.
-     */
-    abstract fun toFile(file: File)
+abstract class DocumentExt: NodeExt() {
 
     companion object {
 

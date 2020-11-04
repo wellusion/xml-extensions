@@ -37,24 +37,37 @@ class DocumentExtTest : BaseTest() {
     }
 
     @Test
+    fun createDocumentFromFile() {
+        var file: File? = null
+        try {
+            val document = DocumentExt.createDocument(testDocumentNoNs)
+            file = File.createTempFile("tmp12345", null)
+            document.ext.toFile(file)
+
+            val targetFile = File(file.path)
+            val targetDocument = DocumentExt.createDocument(targetFile)
+            val child4 = targetDocument.documentElement.ext.getChildElement("child4")
+            assertEquals("child4-value", child4.textContent)
+        } finally {
+            file?.delete()
+        }
+    }
+
+    @Test
     fun getDocumentBuilder() {
         DocumentExt.createDocumentBuilder()
     }
 
-    // @Test
-    // fun writeDocumentToFile() {
-    //     var file: File? = null
-    //     try {
-    //         val document = DocumentExt.createDocument(testDocumentNoNs)
-    //         file = File.createTempFile("tmp12345", null)
-    //         DocumentExt.documentToFile(file, document)
-    //
-    //         val targetFile = File(file.path)
-    //         val targetDocument = DocumentExt.createDocumentBuilder().parse(targetFile)
-    //         val child4 = targetDocument.documentElement.ext.getChildElement("child4")
-    //         assertEquals("child4-value", child4.textContent)
-    //     } finally {
-    //         file?.delete()
-    //     }
-    // }
+    @Test
+    fun writeDocumentToFile() {
+        var file: File? = null
+        try {
+            val document = DocumentExt.createDocument(testDocumentNoNs)
+            file = File.createTempFile("tmp12345", null)
+            document.ext.toFile(file)
+        } finally {
+            file?.delete()
+        }
+    }
+
 }
