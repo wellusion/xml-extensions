@@ -3,15 +3,20 @@ package wellusion
 import org.w3c.dom.Document
 import org.xml.sax.InputSource
 import java.io.File
-import java.io.FileWriter
 import java.io.InputStream
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 
 abstract class DocumentExt {
+
+    /**
+     * Write the document to the file. Note: The specified file has to exist.
+     *
+     * @param file The file to write the document to.
+     */
+    abstract fun toFile(file: File)
+
     companion object {
 
         /**
@@ -38,6 +43,26 @@ abstract class DocumentExt {
         }
 
         /**
+         * Create a document from an byte array
+         *
+         * @param bDocument Document as byte array
+         */
+        fun createDocument(bDocument: ByteArray): Document {
+            val documentBuilder = createDocumentBuilder()
+            return documentBuilder.parse(bDocument.inputStream())
+        }
+
+        /**
+         * Create a document from a file
+         *
+         * @param fDocument Document as File
+         */
+        fun createDocument(fDocument: File): Document {
+            val documentBuilder = createDocumentBuilder()
+            return documentBuilder.parse(fDocument)
+        }
+
+        /**
          * Create a document builder
          *
          * @return Created document builder
@@ -46,20 +71,6 @@ abstract class DocumentExt {
             val documentBuilderFactory = DocumentBuilderFactory.newInstance()
             documentBuilderFactory.isNamespaceAware = true
             return documentBuilderFactory.newDocumentBuilder()
-        }
-
-        /**
-         * Write the document to the file. Note: The specified file has to exist.
-         *
-         * @param file The file to write the document to.
-         * @param document The document for writing.
-         */
-        fun writeDocumentToFile(file: File, document: Document) {
-            FileWriter(file).use { writer ->
-                val result = StreamResult(writer)
-                val source = DOMSource(document)
-                TransformerExt.createXmlTransformer().transform(source, result)
-            }
         }
     }
 }
