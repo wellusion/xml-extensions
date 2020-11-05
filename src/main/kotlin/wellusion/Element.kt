@@ -187,16 +187,6 @@ val Element.ext: ElementExt
             return attr?.textContent?.trim()
         }
 
-        override fun toString(): String {
-            val stringWriter = StringWriter()
-            val transformer = TransformerExt.createXmlTransformer()
-            if (this@ext is Document) {
-                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no")
-            }
-            transformer.transform(DOMSource(this@ext), StreamResult(stringWriter))
-            return stringWriter.toString()
-        }
-
         override fun schemaValidation(schema: Schema, threwException: Boolean): Boolean {
             val validator = schema.newValidator()
             try {
@@ -228,7 +218,11 @@ val Element.ext: ElementExt
         }
 
         val nodeExt = (this@ext as Node).ext
+        
         override fun toFile(file: File) = nodeExt.toFile(file)
+        override fun toInputStream() = nodeExt.toInputStream()
+        override fun toByteArray() = nodeExt.toByteArray()
+        override fun toString() = nodeExt.toString()
     }
 
 private object XPath {

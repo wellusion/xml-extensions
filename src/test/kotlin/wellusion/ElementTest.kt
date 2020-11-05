@@ -250,16 +250,6 @@ class ElementTest : BaseTest() {
     }
 
     @Test
-    fun toStringTest() {
-        val document = DocumentExt.createDocument(testDocument)
-        val sDocument = document.documentElement.ext.toString()
-
-        // The strings sDocument and testDocument don't compare here because a document as a string after
-        // transformations may have mixed nodes or attributes.
-        assert(sDocument.contains("child8|child1|child4-value".toRegex()))
-    }
-
-    @Test
     fun schemaValidation() {
         val document = DocumentExt.createDocument(testDocumentNoNs)
         val schema = SchemaExt.createSchema(testSchemaNoNs)
@@ -297,7 +287,7 @@ class ElementTest : BaseTest() {
     }
 
     @Test
-    fun writeElementToFile() {
+    fun elementToFile() {
         var file: File? = null
         try {
             val eDocument = DocumentExt.createDocument(testDocumentNoNs).documentElement
@@ -306,5 +296,34 @@ class ElementTest : BaseTest() {
         } finally {
             file?.delete()
         }
+    }
+
+    @Test
+    fun elementToInputStream() {
+        val eDocument = DocumentExt.createDocument(testDocumentNoNs).documentElement
+        eDocument.ext.toInputStream().use { inputStream ->
+            val checkingDocument = DocumentExt.createDocument(inputStream)
+            val child4 = checkingDocument.documentElement.ext.getChildElement("child4")
+            Assert.assertEquals("child4-value", child4.textContent)
+        }
+    }
+
+    @Test
+    fun elementToByteArray() {
+        val eDocument = DocumentExt.createDocument(testDocumentNoNs).documentElement
+        val bDocument = eDocument.ext.toByteArray()
+        val checkingDocument = DocumentExt.createDocument(bDocument)
+        val child4 = checkingDocument.documentElement.ext.getChildElement("child4")
+        Assert.assertEquals("child4-value", child4.textContent)
+    }
+
+    @Test
+    fun elementToString() {
+        val document = DocumentExt.createDocument(testDocument)
+        val sDocument = document.documentElement.ext.toString()
+
+        // The strings sDocument and testDocument don't compare here because a document as a string after
+        // transformations may have mixed nodes or attributes.
+        assert(sDocument.contains("child8|child1|child4-value".toRegex()))
     }
 }

@@ -175,13 +175,6 @@ abstract class ElementExt: NodeExt() {
     abstract fun getAttrValue(attrName: String): String?
 
     /**
-     * Represent the element as a string
-     *
-     * @return The element as a string
-     */
-    abstract override fun toString(): String
-
-    /**
      * Check the document for schema compliance
      *
      * @param schema Schema for checking
