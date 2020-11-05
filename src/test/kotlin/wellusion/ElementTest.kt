@@ -2,6 +2,7 @@ package wellusion
 
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 class ElementTest : BaseTest() {
 
@@ -290,8 +291,20 @@ class ElementTest : BaseTest() {
     @Test
     fun removeChildElement() {
         val document = DocumentExt.createDocument(testDocument)
-        val dElement = document.documentElement!!
-        dElement.ext.removeChildElement("child4")
-        Assert.assertNull(dElement.ext.getChildElementIfExist("child4"))
+        val eDocument = document.documentElement!!
+        eDocument.ext.removeChildElement("child4")
+        Assert.assertNull(eDocument.ext.getChildElementIfExist("child4"))
+    }
+
+    @Test
+    fun writeElementToFile() {
+        var file: File? = null
+        try {
+            val eDocument = DocumentExt.createDocument(testDocumentNoNs).documentElement
+            file = File.createTempFile("tmp12345", null)
+            eDocument.ext.toFile(file)
+        } finally {
+            file?.delete()
+        }
     }
 }

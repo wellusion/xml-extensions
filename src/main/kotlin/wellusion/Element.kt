@@ -4,7 +4,9 @@ import org.slf4j.LoggerFactory
 import org.w3c.dom.Attr
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import java.io.File
 import java.io.StringWriter
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.dom.DOMSource
@@ -224,6 +226,9 @@ val Element.ext: ElementExt
             LOG.info("The element \"$elementName\" is removed.")
             return true
         }
+
+        val nodeExt = (this@ext as Node).ext
+        override fun toFile(file: File) = nodeExt.toFile(file)
     }
 
 private object XPath {

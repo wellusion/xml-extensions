@@ -4,7 +4,7 @@ import org.w3c.dom.Attr
 import org.w3c.dom.Element
 import javax.xml.validation.Schema
 
-abstract class ElementExt {
+abstract class ElementExt: NodeExt() {
 
     /**
      * Find nested single-level element by its name without a given namespace
