@@ -251,14 +251,14 @@ class ElementTest : BaseTest() {
 
     @Test
     fun schemaValidation() {
-        val document = DocumentExt.createDocument(testDocumentNoNs)
+        val eDocument = DocumentExt.createDocument(testDocumentNoNs).documentElement
         val schema = SchemaExt.createSchema(testSchemaNoNs)
         val wrongSchema = SchemaExt.createSchema(testSchemaSub2, testSchemaSub1, testSchema)
 
-        Assert.assertTrue(document.documentElement.ext.schemaValidation(schema))
-        Assert.assertFalse(document.documentElement.ext.schemaValidation(wrongSchema))
+        Assert.assertTrue(eDocument.ext.schemaValidation(schema))
+        Assert.assertFalse(eDocument.ext.schemaValidation(wrongSchema))
         Assert.assertThrows(Exception::class.java) {
-            document.documentElement.ext.schemaValidation(wrongSchema, true)
+            eDocument.ext.schemaValidation(wrongSchema, true)
         }
     }
 

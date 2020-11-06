@@ -175,14 +175,6 @@ abstract class ElementExt: NodeExt() {
     abstract fun getAttrValue(attrName: String): String?
 
     /**
-     * Check the document for schema compliance
-     *
-     * @param schema Schema for checking
-     * @return Whether the document is valid or not.
-     */
-    abstract fun schemaValidation(schema: Schema, threwException: Boolean = false): Boolean
-
-    /**
      * A recursive bypass of element tree with a custom function executing.
      *
      * @param consumer The custom function to execute on an every element in this element.

@@ -12,6 +12,7 @@ import java.io.StringWriter
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+import javax.xml.validation.Schema
 
 val Node.ext: NodeExt
     get() = object : NodeExt() {
@@ -51,5 +52,20 @@ val Node.ext: NodeExt
             }
             transformer.transform(DOMSource(this@ext), StreamResult(stringWriter))
             return stringWriter.toString()
+        }
+
+        override fun schemaValidation(schema: Schema, threwException: Boolean): Boolean {
+            val validator = schema.newValidator()
+            try {
+                validator.validate(DOMSource(this@ext))
+            } catch (e: Exception) {
+                if (threwException) {
+                    throw Exception(e)
+                } else {
+                    log.error("Schema validation error: ${e.message}. Stacktrace:${e.stackTrace}")
+                    return false
+                }
+            }
+            return true
         }
     }

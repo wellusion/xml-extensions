@@ -2,14 +2,10 @@ package wellusion
 
 import org.slf4j.LoggerFactory
 import org.w3c.dom.Attr
-import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.File
-import java.io.StringWriter
-import javax.xml.transform.OutputKeys
-import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import javax.xml.validation.Schema
 import javax.xml.xpath.XPathConstants
@@ -187,21 +183,6 @@ val Element.ext: ElementExt
             return attr?.textContent?.trim()
         }
 
-        override fun schemaValidation(schema: Schema, threwException: Boolean): Boolean {
-            val validator = schema.newValidator()
-            try {
-                validator.validate(DOMSource(this@ext))
-            } catch (e: Exception) {
-                if (threwException) {
-                    throw Exception(e)
-                } else {
-                    LOG.error("Schema validation error: ${e.message}. Stacktrace:${e.stackTrace}")
-                    return false
-                }
-            }
-            return true
-        }
-
         override fun elementBypass(consumer: (Element) -> Unit) {
             val childElements = childNodes.ext.toElementList()
             childElements.forEach { element ->
@@ -223,6 +204,7 @@ val Element.ext: ElementExt
         override fun toInputStream() = nodeExt.toInputStream()
         override fun toByteArray() = nodeExt.toByteArray()
         override fun toString() = nodeExt.toString()
+        override fun schemaValidation(schema: Schema, threwException: Boolean) = nodeExt.schemaValidation(schema, threwException)
     }
 
 private object XPath {

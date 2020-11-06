@@ -46,4 +46,16 @@ class DocumentTest : BaseTest() {
         assert(sDocument.contains("child8|child1|child4-value".toRegex()))
     }
 
+    @Test
+    fun schemaValidation() {
+        val document = DocumentExt.createDocument(testDocumentNoNs)
+        val schema = SchemaExt.createSchema(testSchemaNoNs)
+        val wrongSchema = SchemaExt.createSchema(testSchemaSub2, testSchemaSub1, testSchema)
+
+        Assert.assertTrue(document.ext.schemaValidation(schema))
+        Assert.assertFalse(document.ext.schemaValidation(wrongSchema))
+        Assert.assertThrows(Exception::class.java) {
+            document.ext.schemaValidation(wrongSchema, true)
+        }
+    }
 }

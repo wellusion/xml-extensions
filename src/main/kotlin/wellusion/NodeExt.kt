@@ -2,6 +2,7 @@ package wellusion
 
 import java.io.File
 import java.io.InputStream
+import javax.xml.validation.Schema
 
 abstract class NodeExt {
 
@@ -32,4 +33,12 @@ abstract class NodeExt {
      * @return The Node as a String.
      */
     abstract override fun toString(): String
+
+    /**
+     * Check the document for schema compliance
+     *
+     * @param schema Schema for checking
+     * @return Whether the document is valid or not.
+     */
+    abstract fun schemaValidation(schema: Schema, threwException: Boolean = false): Boolean
 }

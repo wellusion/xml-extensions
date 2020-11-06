@@ -1,6 +1,7 @@
 package wellusion
 
 import org.w3c.dom.Document
+import org.w3c.dom.Node
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import javax.xml.XMLConstants
@@ -13,17 +14,17 @@ abstract class SchemaExt {
     /**
      * Check the document for schema compliance
      *
-     * @param document The document for checking
+     * @param node The Node for checking
      * @return Whether the document is valid or not
      */
-    abstract fun isValid(document: Document): Boolean
+    abstract fun isValid(node: Node): Boolean
 
     /**
      * Check the document for schema compliance
      *
-     * @param document The document for checking
+     * @param node The Node for checking
      */
-    abstract fun validate(document: Document)
+    abstract fun validate(node: Node)
 
     companion object {
 
