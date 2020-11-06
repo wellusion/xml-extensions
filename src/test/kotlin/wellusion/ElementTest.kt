@@ -12,7 +12,7 @@ class ElementTest : BaseTest() {
         var element = document.documentElement.ext.getChildElement("child4")
         assert(element.textContent == "child4-value")
 
-        Assert.assertThrows(KotlinNullPointerException::class.java) {
+        Assert.assertThrows(NullPointerException::class.java) {
                 document.documentElement.ext.getChildElement("notExistingChild")
         }
 
@@ -153,7 +153,7 @@ class ElementTest : BaseTest() {
         // Without disabled escaping symbol "&" is replaced by "&amp;"
         Assert.assertEquals(
             "<child1><newNode>newNode&amp;Value</newNode></child1>",
-            child1.ext.toString().replace("[\n\r]".toRegex(), "")
+            child1.ext.toString().replace("[\n\r\\s]".toRegex(), "")
         )
 
         document = DocumentExt.createDocument(testDocument)
@@ -163,7 +163,7 @@ class ElementTest : BaseTest() {
         // And with disabled escaping symbol the "&" are remained "&"
         Assert.assertEquals(
             "<child1><newNode>newNode&Value</newNode></child1>",
-            child1.ext.toString().replace("[\n\r]".toRegex(), "")
+            child1.ext.toString().replace("[\n\r\\s]".toRegex(), "")
         )
     }
 
@@ -176,7 +176,7 @@ class ElementTest : BaseTest() {
         val child1 = newDocument.documentElement.ext.getChildElement("child1")
         child1.ext.addCloneChildElement(newElement)
 
-        Assert.assertEquals("<child1><newElement/></child1>", child1.ext.toString().replace("[\n\r]".toRegex(), ""))
+        Assert.assertEquals("<child1><newElement/></child1>", child1.ext.toString().replace("[\n\r\\s]".toRegex(), ""))
     }
 
     @Test

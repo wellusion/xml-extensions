@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.properties.loadProperties
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.3.61"
+    id("org.jetbrains.kotlin.jvm") version "1.4.10"
     java
 
     id("maven-publish")
@@ -19,14 +19,15 @@ repositories {
 }
 
 var slf4jVer = "1.7.30"
-var commonsIoVer = "2.6"
+var commonsIoVer = "2.8.0"
+var junitVer = "4.13.1"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.slf4j", "slf4j-api", slf4jVer)
 
     testImplementation("commons-io", "commons-io", commonsIoVer)
-    testImplementation("junit", "junit", "4.13")
+    testImplementation("junit", "junit", junitVer)
 }
 
 tasks.withType<KotlinCompile> {
