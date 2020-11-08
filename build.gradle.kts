@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.github.wellusion"
-version = "1.01"
+version = "1.1"
 
 repositories {
     mavenCentral()
