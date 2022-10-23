@@ -1,6 +1,5 @@
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.konan.properties.loadProperties
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.4.10"
@@ -47,13 +46,6 @@ val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
     from(tasks.javadoc)
 }
-
-val ossrhProperties = loadProperties(rootProject.file("ossrh/ossrh.properties").absolutePath)
-ext["signing.keyId"] = ossrhProperties["signing.keyId"]
-ext["signing.password"] = ossrhProperties["signing.password"]
-ext["signing.secretKeyRingFile"] = ossrhProperties["signing.secretKeyRingFile"]
-ext["ossrhUsername"] = ossrhProperties["ossrhUsername"]
-ext["ossrhPassword"] = ossrhProperties["ossrhPassword"]
 
 publishing {
     publications.register<MavenPublication>("publication") {
@@ -105,9 +97,11 @@ publishing {
             val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
             url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
 
-            credentials {
-                username = ossrhProperties["ossrhUsername"] as String
-                password = ossrhProperties["ossrhPassword"] as String
+            if (hasProperty("ossrhUsername") && hasProperty("ossrhPassword")) {
+                credentials {
+                    username = property("ossrhUsername") as String
+                    password = property("ossrhPassword") as String
+                }
             }
         }
     }
