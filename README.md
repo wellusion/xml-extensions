@@ -1,6 +1,3 @@
-**This library isn't working at this moment. Although it can be used as examples for working with XML documents.**
-
-
 # xml-extensions
 **Xml-extensions** is a slight library that contains a set of extensions for working 
 with `org.w3c.dom` package. This library is kind of facade behind which hides the 

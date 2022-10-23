@@ -36,7 +36,7 @@ abstract class DocumentExt: NodeExt() {
         }
 
         /**
-         * Create a document from an byte array
+         * Create a document from a byte array
          *
          * @param bDocument Document as byte array
          */

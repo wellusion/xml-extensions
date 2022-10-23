@@ -10,11 +10,10 @@ plugins {
 }
 
 group = "com.github.wellusion"
-version = "1.1"
+version = "1.12"
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://plugins.gradle.org/m2/") }
 }
 
 var slf4jVer = "1.7.30"
@@ -22,7 +21,6 @@ var commonsIoVer = "2.8.0"
 var junitVer = "4.13.1"
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.slf4j", "slf4j-api", slf4jVer)
 
     testImplementation("commons-io", "commons-io", commonsIoVer)
