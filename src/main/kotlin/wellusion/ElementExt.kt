@@ -2,7 +2,6 @@ package wellusion
 
 import org.w3c.dom.Attr
 import org.w3c.dom.Element
-import javax.xml.validation.Schema
 
 abstract class ElementExt: NodeExt() {
 
@@ -161,10 +160,10 @@ abstract class ElementExt: NodeExt() {
     /**
      * Getting an attribute by his name without a given namespace
      *
-     * @param attrName Attribute name
+     * @param name Attribute name
      * @return Found element
      */
-    abstract fun getAttr(attrName: String): Attr?
+    abstract fun getAttr(name: String): Attr?
 
     /**
      * Getting value of an attribute by his name without a given namespace
@@ -173,6 +172,15 @@ abstract class ElementExt: NodeExt() {
      * @return Value of found attribute
      */
     abstract fun getAttrValue(attrName: String): String?
+
+    /**
+     * Add new attribute or update existing one.
+     *
+     * @param name Attribute name
+     * @param value Attribute name
+     * @return True if the operation is successful
+     */
+    abstract fun setAttr(name: String, value: String): Boolean
 
     /**
      * A recursive bypass of element tree with a custom function executing.

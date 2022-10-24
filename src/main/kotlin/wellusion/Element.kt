@@ -2,6 +2,7 @@ package wellusion
 
 import org.slf4j.LoggerFactory
 import org.w3c.dom.Attr
+import org.w3c.dom.DOMException
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -158,22 +159,22 @@ val Element.ext: ElementExt
             return getAllElementsByXpath("*[@$attrName]")
         }
 
-        override fun getAttr(attrName: String): Attr? {
+        override fun getAttr(name: String): Attr? {
             val attrs = attributes
             if (attrs == null || attrs.length == 0) {
-                LOG.warn("Element by name \"${nodeName}\" hasn't attributes.")
+                LOG.trace("Element by name \"${nodeName}\" hasn't attributes.")
                 return null
             }
 
             var attr: Attr? = null
             for (i in 0 until attrs.length) {
-                if (attrs.item(i).localName == attrName) {
+                if (attrs.item(i).localName == name) {
                     attr = attrs.item(i) as? Attr
                     break
                 }
             }
             if (attr == null) {
-                LOG.warn("Attribute by name: \"$attrName\" not found in the element \"${nodeName}\"")
+                LOG.trace("Attribute by name: \"$name\" not found in the element \"${nodeName}\"")
             }
             return attr
         }
@@ -181,6 +182,25 @@ val Element.ext: ElementExt
         override fun getAttrValue(attrName: String): String? {
             val attr = getAttr(attrName)
             return attr?.textContent?.trim()
+        }
+
+        override fun setAttr(name: String, value: String): Boolean {
+            if (nodeType != Node.ELEMENT_NODE) {
+                LOG.warn("The node \"${tagName}\" is not an element.")
+                return false
+            }
+            return try {
+                val attr = getAttr(name)
+                if (attr != null) {
+                    attr.value = value
+                } else {
+                    setAttribute(name, value)
+                }
+                true
+            } catch (e: DOMException) {
+                LOG.error("Error setting value \"$value\" to attr \"$name\": $e")
+                false
+            }
         }
 
         override fun elementBypass(consumer: (Element) -> Unit) {

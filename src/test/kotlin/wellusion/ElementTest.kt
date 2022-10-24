@@ -250,6 +250,24 @@ class ElementTest : BaseTest() {
     }
 
     @Test
+    fun setAttr() {
+        val document = DocumentExt.createDocument(testDocument)
+        val child3 = document.documentElement.ext.getChildElement("child3")
+        Assert.assertEquals("child3-attr1-value", child3.ext.getAttrValue("child3-attr1"))
+        child3.ext.setAttr("child3-attr1", "new value")
+        Assert.assertEquals("new value", child3.ext.getAttrValue("child3-attr1"))
+    }
+
+    @Test
+    fun setAttrNs() {
+        val document = DocumentExt.createDocument(testDocument)
+        val child3 = document.documentElement.ext.getChildElement("child8")
+        Assert.assertEquals("child8-attr3-value", child3.ext.getAttrValue("child8-attr3"))
+        child3.ext.setAttr("child8-attr3", "new value")
+        Assert.assertEquals("new value", child3.ext.getAttrValue("child8-attr3"))
+    }
+
+    @Test
     fun schemaValidation() {
         val eDocument = DocumentExt.createDocument(testDocumentNoNs).documentElement
         val schema = SchemaExt.createSchema(testSchemaNoNs)
